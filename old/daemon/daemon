@@ -1,0 +1,108 @@
+#!/bin/sh
+
+NAME1="mirobo2lox"
+NAME2="udp_receiver"
+SCRIPTNAME1="mirobo_2_lox"
+SCRIPTPATH1="/opt/loxberry/data/plugins/mirobot2lox"
+SCRIPTNAME2="udp_reci"
+SCRIPTPATH2="/opt/loxberry/data/plugins/mirobot2lox"
+LOGFILE="/opt/loxberry/log/plugins/mirobot2lox/mirobot2lox.log"
+D=`date "+%b %d %H:%M:%S"`
+
+#Install with root permission
+installed_st=$(pip3 list | grep "setuptools" | grep -v grep | wc -l)
+installed_pm=$(pip3 list | grep "python-mirobo" | grep -v grep | wc -l)
+installed_miio=$(pip3 list | grep "python-miio" | grep -v grep | wc -l)
+
+if [ $installed_st -eq "0" ]; then
+echo "$D Setup-Check at boot --  Start installing Setuptools" >> $LOGFILE
+yes | pip3 install -U pip setuptools >> $LOGFILE
+installed_st=$(pip3 list | grep "setuptools" | grep -v grep | wc -l)
+if [ $installed_st -ne "0" ]; then
+echo "$D Setup-Check at boot --  setuptools installed" >> $LOGFILE
+else
+echo "$D !!!! Setup-Check at boot --  setuptools  installation failed !!!!" >> $LOGFILE
+fi 
+else
+echo "$D Setup-Check at boot --  setuptools already installed" >> $LOGFILE
+fi
+
+if [ $installed_pm -eq "1" ]; then
+echo "$D Setup-Check at boot --  Start removing python-mirobo" >> $LOGFILE
+yes | pip3 uninstall python-mirobo >> $LOGFILE
+yes | pip3 uninstall python-miio >> $LOGFILE
+installed_pm=$(pip3 list | grep "python-mirobo" | grep -v grep | wc -l)
+if [ $installed_pm -eq "1" ]; then
+echo "$D Setup-Check at boot -- python-mirobo not removed... Please do it by hand ;)" >> $LOGFILE
+else
+echo "$D !!!! Setup-Check at boot --  python-mirobo removed successfully !!!!" >> $LOGFILE
+echo "$D !!!! Setup-Check at boot --  System is going to reboot now." >> $LOGFILE
+reboot
+fi 
+fi
+
+if [ $installed_miio -eq "0" ]; then
+echo "$D Setup-Check at boot --  Start installing python-miio" >> $LOGFILE
+yes | pip3 install -U pip setuptools >> $LOGFILE
+yes | pip3 install -U python-miio >> $LOGFILE
+yes | pip3 install -U cryptography >> $LOGFILE
+yes | pip3 install appdirs >> $LOGFILE
+
+installed_miio=$(pip3 list | grep "python-miio" | grep -v grep | wc -l)
+if [ $installed_miio -ne "0" ]; then
+echo "$D Setup-Check at boot -- python-miio installed" >> $LOGFILE
+else
+echo "$D !!!! Setup-Check at boot --  python-miio installation failed !!!!" >> $LOGFILE
+fi 
+else
+echo "$D Setup-Check at boot --  python-miio already installed" >> $LOGFILE
+fi
+
+#Update miio 
+miio_upd="/opt/loxberry/config/plugins/mirobot2lox/miio_update"
+if [ -f $miio_upd ]; then
+service mirobo2lox stop 
+D=`date "+%b %d %H:%M:%S"`
+echo "-----------------------------------------------------" >> $LOGFILE
+echo "$D - Update Miio to the newest Version" >> $LOGFILE
+echo "$D - Takes about 1-3 Minutes." >> $LOGFILE
+yes | pip3 install -U pip setuptools >> $LOGFILE
+yes | pip3 install -U python-miio >> $LOGFILE
+D=`date "+%b %d %H:%M:%S"`
+echo "$D - Cleanup System..." >> $LOGFILE
+rm -rf $miio_upd
+echo "-----------------------------------------------------" >> $LOGFILE
+fi
+
+
+#Install ini.d-Services
+FOLDER_INIT="/opt/loxberry/data/plugins/mirobot2lox/init.d"
+if [ -d $FOLDER_INIT ]; then	
+cp -rf $FOLDER_INIT /etc/
+chmod 0755 /etc/init.d/mirobo2lox
+chmod 0755 /opt/loxberry/data/plugins/mirobot2lox/mirobo_2_lox
+chmod 0755 /opt/loxberry/data/plugins/mirobot2lox/mirobo_2_lox_gsd
+chmod 0755 /opt/loxberry/data/plugins/mirobot2lox/udp_reci
+rm -rf $FOLDER_INIT/*.*
+rm -rf $FOLDER_INIT	
+echo "$D MiRobo2Lox - Services installed" >> $LOGFILE
+update-rc.d mirobo2lox defaults 99
+systemctl daemon-reload
+fi
+
+#Start Services if not already started
+pid1=$(ps -eo pid,command | grep "$SCRIPTNAME1" | grep -v grep | wc -l)
+pid2=$(ps -eo pid,command | grep "$SCRIPTNAME2" | grep -v grep | wc -l)
+
+if [ "$pid1" -lt "1" ]; then
+service mirobo2lox stop
+service mirobo2lox start 
+echo "$D Service $NAME1 wurde durch Daemon gestartet" >> $LOGFILE
+fi
+if [ "$pid2" -lt "1" ]; then
+service mirobo2lox stop
+service mirobo2lox start
+echo "$D Service $NAME2 wurde durch Daemon gestartet" >> $LOGFILE
+fi
+
+exit 0 
