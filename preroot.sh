@@ -46,69 +46,67 @@ PCONFIG=$LBPCONFIG/$PDIR
 PSBIN=$LBPSBIN/$PDIR
 PBIN=$LBPBIN/$PDIR
 
-. $LBHOMEDIR/libs/bashlib/loxberry_log.sh
-PACKAGE=${PSHNAME}
-NAME=preroot_install
-FILENAME=${LBPLOG}/${PSHNAME}/preroot_install.log
-APPEND=1
-STDERR=1
+#. $LBHOMEDIR/libs/bashlib/loxberry_log.sh
+#PACKAGE=${PSHNAME}
+#NAME=preroot_install
+#FILENAME=${LBPLOG}/${PSHNAME}/preroot_install.log
+#APPEND=1
+#STDERR=1
   
-LOGSTART "Installation as root user started."
+echo "<INFO> Installation as root user started."
 
-LOGINF "Start installing Python Setuptools..."
+echo "<INFO> Start installing Python Setuptools..."
 yes | pip3 install -U pip setuptools >> ${FILENAME}
 
-INSTALLED_ST=$(pip3 list --format=legacy | grep "setuptools" | grep -v grep | wc -l)
+INSTALLED_ST=$(pip3 list --format=column | grep "setuptools" | grep -v grep | wc -l)
 if [ ${INSTALLED_ST} -ne "0" ]; then
-	LOGOK "Python Setuptools installed successfully."
+	echo "<OK> Python Setuptools installed successfully."
 else
-	LOGCRIT "Python Setuptools installation failed! The plugin will not work without."
-	LOGEND "Giving up."
+	echo "<WARNING> Python Setuptools installation failed! The plugin will not work without."
+	echo "<WARNING> Giving up."
 	exit 2;
 fi 
 
-LOGINF "Start installing Python MIIO tools..."
+echo "<INFO> Start installing Python MIIO tools..."
 yes | pip3 install -U python-miio >> ${FILENAME}
-INSTALLED_MIIO=$(pip3 list --format=legacy | grep "python-miio" | grep -v grep | wc -l)
+INSTALLED_MIIO=$(pip3 list --format=column | grep "python-miio" | grep -v grep | wc -l)
 if [ ${INSTALLED_MIIO} -ne "0" ]; then
-	LOGOK "Python MIIO tools installed successfully."
+	echo "<OK> Python MIIO tools installed successfully."
 else
-	LOGCRIT "Python MIIO tools installation failed! The plugin will not work without."
-	LOGEND "Giving up."
+	echo "<WARNING> Python MIIO tools installation failed! The plugin will not work without."
+	echo "<WARNING> Giving up."
 	exit 2;
 fi 
 
-LOGINF "Start installing Python Cryptography tools..."
+echo "<INFO> Start installing Python Cryptography tools..."
 yes | pip3 install -U cryptography >> ${FILENAME}
-INSTALLED_CRYP=$(pip3 list --format=legacy | grep "cryptography" | grep -v grep | wc -l)
+INSTALLED_CRYP=$(pip3 list --format=column | grep "cryptography" | grep -v grep | wc -l)
 if [ ${INSTALLED_CRYP} -ne "0" ]; then
-	LOGOK "Python Cryptography tools installed successfully."
+	echo "<OK> Python Cryptography tools installed successfully."
 else
-	LOGCRIT "Python Cryptography tools installation failed! The plugin will not work without."
-	LOGEND "Giving up."
+	echo "<WARNING> Python Cryptography tools installation failed! The plugin will not work without."
+	echo "<WARNING> Giving up."
 	exit 2;
 fi 
 
-LOGINF "Start installing Python Appdirs tools..."
+echo "<INFO> Start installing Python Appdirs tools..."
 yes | pip3 install appdirs >> ${FILENAME}
-INSTALLED_APPD=$(pip3 list --format=legacy | grep "appdirs" | grep -v grep | wc -l)
+INSTALLED_APPD=$(pip3 list --format=column | grep "appdirs" | grep -v grep | wc -l)
 if [ ${INSTALLED_APPD} -ne "0" ]; then
-	LOGOK "Python Appdirs tools installed successfully."
+	echo "<OK> Python Appdirs tools installed successfully."
 else
-	LOGCRIT "Python Appdirs tools installation failed! The plugin will not work without."
-	LOGEND "Giving up."
+	echo "<WARNING> Python Appdirs tools installation failed! The plugin will not work without."
+	echo "<WARNING> Giving up."
 	exit 2;
 fi 
 
-LOGINF "Start installing Python GoogleTTS Module..."
+echo "<INFO> Start installing Python GoogleTTS Module..."
 yes | pip3 install gTTS >> ${FILENAME}
-INSTALLED_APPD=$(pip3 list --format=legacy | grep "gtts" | grep -v grep | wc -l)
+INSTALLED_APPD=$(pip3 list --format=column | grep "gtts" | grep -v grep | wc -l)
 if [ ${INSTALLED_APPD} -ne "0" ]; then
-	LOGOK "Python GoogleTTS Module installed successfully."
+	echo "<OK> Python GoogleTTS Module installed successfully."
 else
-	LOGCRIT "Python GoogleTTS Module installation failed! We will continue anyway."
+	echo "<WARNING> Python GoogleTTS Module installation failed! We will continue anyway."
 fi 
-
-LOGEND "Good Bye."
 
 exit 0
