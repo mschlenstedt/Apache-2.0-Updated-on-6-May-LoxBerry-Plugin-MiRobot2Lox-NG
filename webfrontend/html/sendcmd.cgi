@@ -37,7 +37,7 @@ my $cgi = CGI->new;
 $cgi->import_names('R');
 
 # Read settings
-my $cfg = new Config::Simple("$lbpconfigdir/mirobot2lox-ng.cfg");
+my $cfg = new Config::Simple("$lbpconfigdir/mirobot2lox.cfg");
 
 ##########################################################################
 # Main program
@@ -45,27 +45,28 @@ my $cfg = new Config::Simple("$lbpconfigdir/mirobot2lox-ng.cfg");
 
 print "Content-Type: text/plain\n\n";
 
-# Everything from URL
-#foreach (split(/&/,$ENV{'QUERY_STRING'}))
-#{
-#  ($namef,$value) = split(/=/,$_,2);
-#  $namef =~ tr/+/ /;
-#  $namef =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg;
-#  $value =~ tr/+/ /;
-#  $value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg;
-#  $query{$namef} = $value;
-#}
+if ( !$R::command ) {
+	print "Awaiting your commands, master.\n";
+	print "Please define a command with &command=X";
+	exit 1;
+}
+if ( !$R::robot ) {
+	print "Please define a robot with &robot=X";
+	exit 1;
+}
+if ( $R::robot > 4 ) {
+	print "Only 4 robots are supported.";
+	exit 1;
+}
+if ( !$cfg->param("ROBOT" . $R::robot . ".ACTIVE") ) {
+	print "Robot $R::robot is not active.";
+	exit 1;
+}
 
-#  print "/usr/bin/sudo $installfolder/data/plugins/$psubfolder/bin/send433 -p=$transPIN $pulselength $family $group $unit $command\n\n";
-#  our $output = qx(/usr/bin/sudo $installfolder/data/plugins/$psubfolder/bin/send433 -p=$transPIN $pulselength $family $group $unit $command 2>&1);
-#  if ( $? ne 0 ) {
-#    $send = 1;
-#    print "ERROR - Somehting went wrong. Could not send command. This is the error message: ";
-#  } else {
-#    $send = 1;
-#    print "OK:\n";
-#    our $output1 = qx(/usr/bin/sudo $installfolder/data/plugins/$psubfolder/bin/send433 -p=$transPIN $pulselength $family $group $unit $command 2>&1);
-#    our $output2 = qx(/usr/bin/sudo $installfolder/data/plugins/$psubfolder/bin/send433 -p=$transPIN $pulselength $family $group $unit $command 2>&1);
-#  }
+my $ip = $cfg->param("ROBOT" . $R::robot . ".IP");
+my $token = $cfg->param("ROBOT" . $R::robot . ".TOKEN");
 
+print "mirobo --ip $ip --token $token $R::command $R::option\n\n";
+system("$lbpbindir/mirobo_wrapper.sh $ip $token $R::command $R::option");
 
+exit 0;
