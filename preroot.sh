@@ -58,7 +58,7 @@ echo "<INFO> Installation as root user started."
 echo "<INFO> Start installing Python Setuptools..."
 yes | pip3 install -U pip setuptools 
 
-INSTALLED_ST=$(pip3 list --format=column | grep "setuptools" | grep -v grep | wc -l)
+INSTALLED_ST=$(pip3 list --format=columns | grep "setuptools" | grep -v grep | wc -l)
 if [ ${INSTALLED_ST} -ne "0" ]; then
 	echo "<OK> Python Setuptools installed successfully."
 else
@@ -69,7 +69,7 @@ fi
 
 echo "<INFO> Start installing Python MIIO tools..."
 yes | pip3 install -U python-miio 
-INSTALLED_MIIO=$(pip3 list --format=column | grep "python-miio" | grep -v grep | wc -l)
+INSTALLED_MIIO=$(pip3 list --format=columns | grep "python-miio" | grep -v grep | wc -l)
 if [ ${INSTALLED_MIIO} -ne "0" ]; then
 	echo "<OK> Python MIIO tools installed successfully."
 else
@@ -80,7 +80,7 @@ fi
 
 echo "<INFO> Start installing Python Cryptography tools..."
 yes | pip3 install -U cryptography 
-INSTALLED_CRYP=$(pip3 list --format=column | grep "cryptography" | grep -v grep | wc -l)
+INSTALLED_CRYP=$(pip3 list --format=columns | grep "cryptography" | grep -v grep | wc -l)
 if [ ${INSTALLED_CRYP} -ne "0" ]; then
 	echo "<OK> Python Cryptography tools installed successfully."
 else
@@ -91,7 +91,7 @@ fi
 
 echo "<INFO> Start installing Python Appdirs tools..."
 yes | pip3 install appdirs 
-INSTALLED_APPD=$(pip3 list --format=column | grep "appdirs" | grep -v grep | wc -l)
+INSTALLED_APPD=$(pip3 list --format=columns | grep "appdirs" | grep -v grep | wc -l)
 if [ ${INSTALLED_APPD} -ne "0" ]; then
 	echo "<OK> Python Appdirs tools installed successfully."
 else
@@ -102,7 +102,7 @@ fi
 
 echo "<INFO> Start installing Python GoogleTTS Module..."
 yes | pip3 install gTTS 
-INSTALLED_APPD=$(pip3 list --format=column | grep "gtts" | grep -v grep | wc -l)
+INSTALLED_APPD=$(pip3 list --format=columns | grep "gtts" | grep -v grep | wc -l)
 if [ ${INSTALLED_APPD} -ne "0" ]; then
 	echo "<OK> Python GoogleTTS Module installed successfully."
 else
