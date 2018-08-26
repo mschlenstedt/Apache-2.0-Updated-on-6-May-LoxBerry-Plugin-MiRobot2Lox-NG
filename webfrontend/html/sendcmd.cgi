@@ -62,8 +62,8 @@ if ( !$robot ) {
 	print "Please define a robot with &robot=X";
 	exit 1;
 }
-if ( $robot > 4 ) {
-	print "Only 4 robots are supported.";
+if ( $robot > 5 ) {
+	print "Only 5 robots are supported.";
 	exit 1;
 }
 if ( !$cfg->param("ROBOT" . $robot . ".ACTIVE") ) {
@@ -71,15 +71,17 @@ if ( !$cfg->param("ROBOT" . $robot . ".ACTIVE") ) {
 	exit 1;
 }
 if ( $debug) {
-	$debug = "-d";
+	$debug = "1";
 } else {
 	$debug = "";
+}
+if ( !$option ) {
+	$option = "none";
 }
 
 my $ip = $cfg->param("ROBOT" . $robot . ".IP");
 my $token = $cfg->param("ROBOT" . $robot . ".TOKEN");
 
-print "mirobo --ip $ip --token $token $debug $command $option\n\n";
-system("$lbpbindir/mirobo_wrapper.sh $ip $token $debug $command $option");
+system("$lbpbindir/mirobo_wrapper.sh $ip $token $command $option $debug");
 
 exit 0;

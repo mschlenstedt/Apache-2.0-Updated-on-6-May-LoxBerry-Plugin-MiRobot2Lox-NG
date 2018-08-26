@@ -1,41 +1,739 @@
+<TMPL_IF FORM1>
+									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=1">
+										<input type="hidden" name="saveformdata1" value="1">
+											<div class="form-group">
+												<table class="formtable" border="0" width="100%" cellpadding="10">
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+															<h2><TMPL_VAR SETTINGS.LABEL_SETTINGS></h2>
+														</td>
+														<td align="right">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td width="20%">
+															<fieldset>
+															<TMPL_VAR GETDATA>
+															</fieldset>
+															</td>
+															<td>
+															<TMPL_VAR CRON>
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_FETCH_DATA></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelsendudp"><TMPL_VAR SETTINGS.LABEL_SENDBYUDP></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td width="20%">
+															<fieldset>
+															<TMPL_VAR SENDUDP>
+															</fieldset>
+															</td>
+															<td>
+															<table border=0 width="100%">
+															<tr>
+															<td>
+															<label id="labeludpport"><TMPL_VAR SETTINGS.LABEL_UDPPORT></label>
+															</td>
+															<td>
+																<input id="udpport" name="udpport" type="text" data-validation="number" class="textfield" value="<TMPL_VAR MAIN.UDPPORT>" 
+																data-validation-allowing="range[1;65000]"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_UDPPORT>">
+															</td>
+															</tr>
+															</table>
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_UDP></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelsendhtml"><TMPL_VAR SETTINGS.LABEL_SENDBYHTML></label>
+														</td>
+														<td width="50%">
+														  <table border=0>
+																<tr><td>
+														  <fieldset>
+														  	 <select id="sendhtml" name="sendhtml" data-role="flipswitch" disabled=disabled>
+														  		<option value="0"><TMPL_VAR SETTINGS.LABEL_OFF></option>
+														 	 	<option selected=selected value="1"><TMPL_VAR SETTINGS.LABEL_ON></option>
+														  		</select>
+														  </fieldset>
+																</td><td>
+																&nbsp;&nbsp;<font size="-1"><TMPL_VAR SETTINGS.LABEL_LINK>: <a href="<TMPL_VAR WEBSITE>" target=_blank"><TMPL_VAR WEBSITE></a></font>
+																</td></tr>
+																</table>
+														</td>
+														<td width="5%" valign="middle">
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_HTML></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+												</table>
+											</div>
+									<p>
+										&nbsp;
+									</p>
+									<p>
+										<center>
+											<a id="btncancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=1"><TMPL_VAR SETTINGS.BUTTON_CANCEL></a>
+												<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_SAVE></button>
+										</center>
+									</form>
+									</p>
+									<script>
+									// Activate on Load
+									disable();
+
+									// Add some attributes PERL::CGI doesn't provide
+									$('#sendudp').attr('data-role','flipswitch');
+									$('select[name=getdata]').attr('data-role','flipswitch');
+									$('select[name=weatherservice]').attr('data-mini','true');
+									$('select[name=wulang]').attr('data-mini','true');
+									$('select[name=darkskylang]').attr('data-mini','true');
+									//$('select[name=wulang]').attr('data-native-menu','false');
+									$('select[name=metric]').attr('data-mini','true');
+									//$('select[name=metric]').attr('data-native-menu','false');
+									$('select[name=cron]').attr('data-mini','true');
+									//$('select[name=cron]').attr('data-native-menu','false');
+
+									// Disable some form elements depending on selected options
+									function disable() {
+										var click = $('input[name=wustationtyp]:checked').val();
+										if ( click === "statid" ) {
+											$('#linkwundermap').removeClass('ui-disabled');
+											$('#labelwustationid').removeClass('ui-disabled');
+											$('#wustationid').removeClass('ui-disabled');
+											$('#labelwucoord').addClass('ui-disabled');
+											$('#labelwucoordlat').addClass('ui-disabled');
+											$('#labelwucoordlong').addClass('ui-disabled');
+											$('#wucoordlat').addClass('ui-disabled');
+											$('#wucoordlong').addClass('ui-disabled');
+											$('#wucoordaddresssearch').addClass('ui-disabled');
+											$('#wustationid').removeClass('ui-disabled');
+										}
+										if ( click === "coord" ) {
+											$('#linkwundermap').addClass('ui-disabled');
+											$('#labelwustationid').addClass('ui-disabled');
+											$('#labelwucoord').removeClass('ui-disabled');
+											$('#labelwucoordlat').removeClass('ui-disabled');
+											$('#labelwucoordlong').removeClass('ui-disabled');
+											$('#wucoordlat').removeClass('ui-disabled');
+											$('#wucoordlong').removeClass('ui-disabled');
+											$('#wucoordaddresssearch').removeClass('ui-disabled');
+											$('#wustationid').addClass('ui-disabled');
+										}
+										if ( click === "autoip" ) {
+											$('#linkwundermap').addClass('ui-disabled');
+											$('#labelwustationid').addClass('ui-disabled');
+											$('#wustationid').addClass('ui-disabled');
+											$('#labelwucoord').addClass('ui-disabled');
+											$('#labelwucoordlat').addClass('ui-disabled');
+											$('#labelwucoordlong').addClass('ui-disabled');
+											$('#wucoordlat').addClass('ui-disabled');
+											$('#wucoordlong').addClass('ui-disabled');
+											$('#wucoordaddresssearch').addClass('ui-disabled');
+										}
+									}
+									</script>
+</TMPL_IF>
+<TMPL_IF FORM2>
+<table class="formtable" border="1" width="100%" cellpadding="10">
+	<tr>
+		<td colspan=5 width="75%" valign="middle">
+		<h2><TMPL_VAR SETTINGS.LABEL_ROBOTCOMMANDS></h2>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+										<b><TMPL_VAR SETTINGS.LABEL_MIROBOT> #1</b>
+		</td>
+		<td width="20%" align="center">
+										<b><TMPL_VAR SETTINGS.LABEL_MIROBOT> #2</b>
+		</td>
+		<td width="20%" align="center">
+										<b><TMPL_VAR SETTINGS.LABEL_MIROBOT> #3</b>
+		</td>
+		<td width="20%" align="center">
+										<b><TMPL_VAR SETTINGS.LABEL_MIROBOT> #4</b>
+		</td>
+		<td width="20%" align="center">
+										<b><TMPL_VAR SETTINGS.LABEL_MIROBOT> #5</b>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=raw_command&option=miIO.info&robot=1&debug=1" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DEBUGINFO></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=raw_command&option=miIO.info&robot=1&debug=1" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DEBUGINFO></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=raw_command&option=miIO.info&robot=1&debug=1" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DEBUGINFO></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=raw_command&option=miIO.info&robot=1&debug=1" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DEBUGINFO></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=raw_command&option=miIO.info&robot=1&debug=1" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DEBUGINFO></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=status&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_STATUS></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=status&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_STATUS></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=status&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_STATUS></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=status&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_STATUS></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=status&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_STATUS></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_status&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLESTATUS></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_status&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLESTATUS></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_status&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLESTATUS></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_status&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLESTATUS></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_status&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLESTATUS></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=find&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FIND></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=find&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FIND></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=find&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FIND></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=find&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FIND></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=find&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FIND></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=start&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_START></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=start&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_START></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=start&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_START></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=start&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_START></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=start&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_START></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=stop&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_STOP></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=stop&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_STOP></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=stop&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_STOP></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=stop&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_STOP></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=stop&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_STOP></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=home&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_HOME></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=home&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_HOME></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=home&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_HOME></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=home&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_HOME></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=home&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_HOME></a>
+		</td>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=25&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_25></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=25&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_25></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=25&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_25></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=25&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_25></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=25&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_25></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=50&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_50></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=50&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_50></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=50&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_50></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=50&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_50></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=50&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_50></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=75&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_75></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=75&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_75></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=75&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_75></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=75&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_75></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=75&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_75></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=100&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_100></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=100&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_100></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=100&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_100></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=100&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_100></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_fan_speed&option=100&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_FAN_100></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_carpet_mode&option=true&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CARPETMODEON></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_carpet_mode&option=true&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CARPETMODEON></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_carpet_mode&option=true&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CARPETMODEON></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_carpet_mode&option=true&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CARPETMODEON></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_carpet_mode&option=true&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CARPETMODEON></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_carpet_mode&option=false&robot=1&debug=false" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CARPETMODEOFF></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_carpet_mode&option=false&robot=2&debug=false" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CARPETMODEOFF></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_carpet_mode&option=false&robot=3&debug=false" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CARPETMODEOFF></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_carpet_mode&option=false&robot=4&debug=false" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CARPETMODEOFF></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_carpet_mode&option=false&robot=5&debug=false" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CARPETMODEOFF></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=main_brush_work_time&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETMAINBRUSH></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=main_brush_work_time&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETMAINBRUSH></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=main_brush_work_time&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETMAINBRUSH></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=main_brush_work_time&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETMAINBRUSH></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=main_brush_work_time&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETMAINBRUSH></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=side_brush_work_time&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETSIDEBRUSH></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=side_brush_work_time&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETSIDEBRUSH></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=side_brush_work_time&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETSIDEBRUSH></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=side_brush_work_time&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETSIDEBRUSH></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=side_brush_work_time&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETSIDEBRUSH></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=filter_work_time&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETFILTER></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=filter_work_time&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETFILTER></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=filter_work_time&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETFILTER></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=filter_work_time&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETFILTER></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=filter_work_time&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETFILTER></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=sensor_dirty_time&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETSENSOR></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=sensor_dirty_time&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETSENSOR></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=sensor_dirty_time&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETSENSOR></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=sensor_dirty_time&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETSENSOR></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=sensor_dirty_time&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETSENSOR></a>
+		</td>
+	</tr>
+</table>
+</TMPL_IF>
+<TMPL_IF FORM3>
+									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=3">
+										<input type="hidden" name="saveformdata3" value="1">
+											<div class="form-group">
+												<table class="formtable" border="0" width="100%" cellpadding="10">
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+														<h2><TMPL_VAR SETTINGS.LABEL_CLOUDEMU></h2>
+														</td>
+														<td align="right">
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelemu"><TMPL_VAR SETTINGS.LABEL_ENABLECLOUDEMU></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td width="20%">
+															<fieldset>
+															<TMPL_VAR EMU>
+															</fieldset>
+															</td>
+															<td>
+															<font color="red" size="-1"><b><TMPL_VAR EMUWARNING></b></font>
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_CLOUDEMU></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+														<h2><TMPL_VAR SETTINGS.LABEL_WEBSITE></h2>
+														</td>
+														<td align="right">
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+														<label id="labelURL"><TMPL_VAR SETTINGS.LABEL_LINK></label>
+														</td>
+														<td width="50%">
+														<a href="<TMPL_VAR WEBSITE>" target=_blank"><TMPL_VAR WEBSITE></a>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labeltheme"><TMPL_VAR SETTINGS.LABEL_THEME></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR THEME>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+														<a href="#" data-role="button" id="preview1" data-inline="true" data-mini="true" onClick="preview();">
+														<font size="-1"><TMPL_VAR SETTINGS.LABEL_PREVIEW></font>
+														</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labeliconset"><TMPL_VAR SETTINGS.LABEL_ICONSET></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR ICONSET>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+														<a href="#" data-role="button" id="preview2" data-inline="true" data-mini="true" onClick="preview();">
+														<font size="-1"><TMPL_VAR SETTINGS.LABEL_PREVIEW></font>
+														</a>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+												</table>
+											</div>
+									<p>
+										&nbsp;
+									</p>
+									<p>
+										<center>
+											<a id="btncancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=3"><TMPL_VAR SETTINGS.BUTTON_CANCEL></a>
+												<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_SAVE></button>
+										</center>
+									</form>
+									</p>
+									<script>
+									// Add some attributes PERL::CGI doesn't provide
+									$('select[name=emu]').attr('data-role','flipswitch');
+									$('select[name=theme]').attr('data-mini','true');
+									$('select[name=iconset]').attr('data-mini','true');
+
+									// Preview Link for theme and iconset
+									function preview() {
+										var url = './show.cgi?theme=' + $('#theme').val() + '&iconset=' + $('#iconset').val();
+										window.open(url, 'NewWindow');
+									}
+									</script>
+</TMPL_IF>
+<TMPL_IF ERROR>
 <center>
-<p>
-<table border=1>
-<tr><td>
-	<table border=0 cellpadding=10 cellspacing=10>
+	<table border=0>
 	<tr>
-	<td colspan=5 align=center>
-	<b><TMPL_VAR SETTINGS.LABEL_SERVER></b>
-	</td>
+		<td align="center">
+		<h2><TMPL_VAR HINT_ERROR></h2>
+		<p>
+		<TMPL_VAR ERRORMESSAGE>
+		</p>
+		</td>
 	</tr>
 	<tr>
-	<td>
-		<a id="button" data-icon="check" data-role="button" data-inline="true" data-mini="false" href="./index.cgi?do=start"><TMPL_VAR SETTINGS.LABEL_START></a>
-	</td>
-	<td>
-		<a id="button" data-icon="delete" data-role="button" data-inline="true" data-mini="false" href="./index.cgi?do=stop"><TMPL_VAR SETTINGS.LABEL_STOP></a>
-	</td>
-	<td>
-		<a id="button" data-icon="refresh" data-role="button" data-inline="true" data-mini="false" href="./index.cgi?do=restart"><TMPL_VAR SETTINGS.LABEL_RESTART></a>
-	</td>
-	<td>
-		<a id="button" data-icon="delete" data-role="button" data-inline="true" data-mini="false" href="./index.cgi?do=enable"><TMPL_VAR SETTINGS.LABEL_ENABLE></a>
-	</td>
-	<td>
-		<a id="button" data-icon="delete" data-role="button" data-inline="true" data-mini="false" href="./index.cgi?do=disable"><TMPL_VAR SETTINGS.LABEL_DISABLE></a>
-	</td>
-	</tr>
-	<tr>
-	<td colspan=5 align=center>
-		<font face="courier"><TMPL_VAR SETTINGS.LABEL_BOOTSTATE>&nbsp;<b><TMPL_VAR BOOTSTATE></b>&nbsp;&nbsp;<TMPL_VAR SETTINGS.LABEL_STATE>&nbsp;<b><TMPL_VAR STATE></b></font>
-	</td>
+		<td align="center">
+		<p>
+		<a id="btnok" data-role="button" data-inline="true" data-mini="true" data-icon="check" href="./index.cgi?form=<TMPL_VAR FORMNO>"><TMPL_VAR SETTINGS.BUTTON_OK></a>
+		</p>
+		</td>
 	</tr>
 	</table>
-</td></td>
-</table>
-</p>
-<br>
-<p>
-<TMPL_VAR SETTINGS.HINT_NOSETTINGS>
-</p>
 </center>
+</TMPL_IF>
+<TMPL_IF SAVE>
+<center>
+	<table border=0>
+	<tr>
+		<td align="center">
+		<h2><TMPL_VAR SETTINGS.HINT_OK></h2>
+		<p>
+		<TMPL_VAR SETTINGS.OK_SETTINGS_SAVED>
+		</p>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+		<p>
+		<a id="btnok" data-role="button" data-inline="true" data-mini="true" data-icon="check" href="./index.cgi?form=<TMPL_VAR FORMNO>"><TMPL_VAR SETTINGS.BUTTON_OK></a>
+		</p>
+		</td>
+	</tr>
+	</table>
+</center>
+</TMPL_IF>
