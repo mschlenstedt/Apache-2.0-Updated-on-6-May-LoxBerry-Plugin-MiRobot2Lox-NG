@@ -1,2 +1,2 @@
-# LoxBerry-Plugin-LMS4Lox
-A LoxBerry Plugin: 
+# LoxBerry-Plugin-MiRobot2Lox-NG
+A LoxBerry Plugin.
