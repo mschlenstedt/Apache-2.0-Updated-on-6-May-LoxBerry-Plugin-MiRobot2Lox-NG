@@ -21,6 +21,7 @@
 use Config::Simple '-strict';
 use CGI::Carp qw(fatalsToBrowser);
 use CGI;
+use URI::Encode qw(uri_encode uri_decode);
 use LoxBerry::System;
 use warnings;
 use strict;
@@ -45,28 +46,40 @@ my $cfg = new Config::Simple("$lbpconfigdir/mirobot2lox.cfg");
 
 print "Content-Type: text/plain\n\n";
 
-if ( !$R::command ) {
+# Clean CGI values
+my $command = uri_decode($R::command);
+my $robot = uri_decode($R::robot);
+my $option = uri_decode($R::option);
+my $debug = uri_decode($R::debug);
+
+# Checks
+if ( !$command ) {
 	print "Awaiting your commands, master.\n";
 	print "Please define a command with &command=X";
 	exit 1;
 }
-if ( !$R::robot ) {
+if ( !$robot ) {
 	print "Please define a robot with &robot=X";
 	exit 1;
 }
-if ( $R::robot > 4 ) {
+if ( $robot > 4 ) {
 	print "Only 4 robots are supported.";
 	exit 1;
 }
-if ( !$cfg->param("ROBOT" . $R::robot . ".ACTIVE") ) {
-	print "Robot $R::robot is not active.";
+if ( !$cfg->param("ROBOT" . $robot . ".ACTIVE") ) {
+	print "Robot $robot is not active.";
 	exit 1;
 }
+if ( $debug) {
+	$debug = "-d";
+} else {
+	$debug = "";
+}
 
-my $ip = $cfg->param("ROBOT" . $R::robot . ".IP");
-my $token = $cfg->param("ROBOT" . $R::robot . ".TOKEN");
+my $ip = $cfg->param("ROBOT" . $robot . ".IP");
+my $token = $cfg->param("ROBOT" . $robot . ".TOKEN");
 
-print "mirobo --ip $ip --token $token $R::command $R::option\n\n";
-system("$lbpbindir/mirobo_wrapper.sh $ip $token $R::command $R::option");
+print "mirobo --ip $ip --token $token $debug $command $option\n\n";
+system("$lbpbindir/mirobo_wrapper.sh $ip $token $debug $command $option");
 
 exit 0;
