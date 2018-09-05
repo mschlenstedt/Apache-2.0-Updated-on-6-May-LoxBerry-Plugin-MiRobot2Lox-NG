@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# pluginname=$(basename $0 .sh)
+pluginname=REPLACELBPPLUGINDIR
+touch $LBPLOG/$pluginname/mirobot2lox.log > /dev/null 2>&1
+touch $LBPLOG/$pluginname/robotsdata.txt > /dev/null 2>&1

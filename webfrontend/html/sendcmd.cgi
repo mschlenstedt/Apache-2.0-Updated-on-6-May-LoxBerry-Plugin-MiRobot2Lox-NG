@@ -82,6 +82,6 @@ if ( !$option ) {
 my $ip = $cfg->param("ROBOT" . $robot . ".IP");
 my $token = $cfg->param("ROBOT" . $robot . ".TOKEN");
 
-system("$lbpbindir/mirobo_wrapper.sh $ip $token $command $option $debug");
+system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' '$command' '$option' '$debug'");
 
 exit 0;

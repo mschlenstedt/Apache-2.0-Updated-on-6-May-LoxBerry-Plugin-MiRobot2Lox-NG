@@ -1,198 +1,536 @@
 <TMPL_IF FORM1>
-									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=1">
-										<input type="hidden" name="saveformdata1" value="1">
-											<div class="form-group">
-												<table class="formtable" border="0" width="100%" cellpadding="10">
-													<tr>
-														<td colspan=3 width="75%" valign="middle">
-															<h2><TMPL_VAR SETTINGS.LABEL_SETTINGS></h2>
-														</td>
-														<td align="right">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA></label>
-														</td>
-														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-															<td width="20%">
-															<fieldset>
-															<TMPL_VAR GETDATA>
-															</fieldset>
-															</td>
-															<td>
-															<TMPL_VAR CRON>
-															</td>
-															</tr>
-															</table>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_FETCH_DATA></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelsendudp"><TMPL_VAR SETTINGS.LABEL_SENDBYUDP></label>
-														</td>
-														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-															<td width="20%">
-															<fieldset>
-															<TMPL_VAR SENDUDP>
-															</fieldset>
-															</td>
-															<td>
-															<table border=0 width="100%">
-															<tr>
-															<td>
-															<label id="labeludpport"><TMPL_VAR SETTINGS.LABEL_UDPPORT></label>
-															</td>
-															<td>
-																<input id="udpport" name="udpport" type="text" data-validation="number" class="textfield" value="<TMPL_VAR MAIN.UDPPORT>" 
-																data-validation-allowing="range[1;65000]"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_UDPPORT>">
-															</td>
-															</tr>
-															</table>
-															</td>
-															</tr>
-															</table>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_UDP></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelsendhtml"><TMPL_VAR SETTINGS.LABEL_SENDBYHTML></label>
-														</td>
-														<td width="50%">
-														  <table border=0>
-																<tr><td>
-														  <fieldset>
-														  	 <select id="sendhtml" name="sendhtml" data-role="flipswitch" disabled=disabled>
-														  		<option value="0"><TMPL_VAR SETTINGS.LABEL_OFF></option>
-														 	 	<option selected=selected value="1"><TMPL_VAR SETTINGS.LABEL_ON></option>
-														  		</select>
-														  </fieldset>
-																</td><td>
-																&nbsp;&nbsp;<font size="-1"><TMPL_VAR SETTINGS.LABEL_LINK>: <a href="<TMPL_VAR WEBSITE>" target=_blank"><TMPL_VAR WEBSITE></a></font>
-																</td></tr>
-																</table>
-														</td>
-														<td width="5%" valign="middle">
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_HTML></font>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=4>
-														&nbsp;
-														</td>
-													</tr>
-												</table>
-											</div>
-									<p>
-										&nbsp;
-									</p>
-									<p>
-										<center>
-											<a id="btncancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=1"><TMPL_VAR SETTINGS.BUTTON_CANCEL></a>
-												<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_SAVE></button>
-										</center>
-									</form>
-									</p>
-									<script>
-									// Activate on Load
-									disable();
+<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=1">
+	<input type="hidden" name="saveformdata1" value="1">
+		<table class="formtable" border="0" width="100%" cellpadding="10">
+			<tr>
+				<td colspan=3 width="75%" valign="middle">
+					<h2><TMPL_VAR SETTINGS.LABEL_SETTINGS></h2>
+				</td>
+				<td align="right">
+					&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA></label>
+				</td>
+				<td width="50%">
+					<table border=0 width="100%">
+					<tr>
+					<td width="20%">
+					<fieldset>
+					<TMPL_VAR GETDATA>
+					</fieldset>
+					</td>
+					<td>
+					<TMPL_VAR CRON>
+					</td>
+					</tr>
+					</table>
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_FETCH_DATA></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelsendudp"><TMPL_VAR SETTINGS.LABEL_SENDBYUDP></label>
+				</td>
+				<td width="50%">
+					<table border=0 width="100%">
+					<tr>
+					<td width="20%">
+					<fieldset>
+					<TMPL_VAR SENDUDP>
+					</fieldset>
+					</td>
+					<td>
+					<table border=0 width="100%">
+					<tr>
+					<td>
+					<label id="labeludpport"><TMPL_VAR SETTINGS.LABEL_UDPPORT></label>
+					</td>
+					<td>
+						<input id="udpport" name="udpport" type="text" data-validation-rule="special:number-min-max-value:1:65000" class="textfield" value="<TMPL_VAR MAIN.UDPPORT>" 
+						data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_UDPPORT>">
+					</td>
+					</tr>
+					</table>
+					</td>
+					</tr>
+					</table>
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_UDP></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelms"><TMPL_VAR SETTINGS.LABEL_MS></label>
+				</td>
+				<td width="50%">
+					<fieldset>
+					<TMPL_VAR MS>
+					</fieldset>
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_MS></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelsendhtml"><TMPL_VAR SETTINGS.LABEL_SENDBYHTML></label>
+				</td>
+				<td width="50%">
+				  <table border=0>
+						<tr><td>
+				  <fieldset>
+				  	 <select id="sendhtml" name="sendhtml" data-role="flipswitch" disabled=disabled>
+				  		<option value="0"><TMPL_VAR SETTINGS.LABEL_OFF></option>
+				 	 	<option selected=selected value="1"><TMPL_VAR SETTINGS.LABEL_ON></option>
+				  		</select>
+				  </fieldset>
+						</td><td>
+						&nbsp;&nbsp;<font size="-1"><TMPL_VAR SETTINGS.LABEL_LINK>: <a href="<TMPL_VAR WEBSITE>" target=_blank"><TMPL_VAR WEBSITE></a></font>
+						</td></tr>
+						</table>
+				</td>
+				<td width="5%" valign="middle">
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_HTML></font>
+				</td>
+			</tr>
+			<tr>
+				<td colspan=4>
+				&nbsp;
+				</td>
+			</tr>
+		</table>
 
-									// Add some attributes PERL::CGI doesn't provide
-									$('#sendudp').attr('data-role','flipswitch');
-									$('select[name=getdata]').attr('data-role','flipswitch');
-									$('select[name=weatherservice]').attr('data-mini','true');
-									$('select[name=wulang]').attr('data-mini','true');
-									$('select[name=darkskylang]').attr('data-mini','true');
-									//$('select[name=wulang]').attr('data-native-menu','false');
-									$('select[name=metric]').attr('data-mini','true');
-									//$('select[name=metric]').attr('data-native-menu','false');
-									$('select[name=cron]').attr('data-mini','true');
-									//$('select[name=cron]').attr('data-native-menu','false');
+		<br><br>
 
-									// Disable some form elements depending on selected options
-									function disable() {
-										var click = $('input[name=wustationtyp]:checked').val();
-										if ( click === "statid" ) {
-											$('#linkwundermap').removeClass('ui-disabled');
-											$('#labelwustationid').removeClass('ui-disabled');
-											$('#wustationid').removeClass('ui-disabled');
-											$('#labelwucoord').addClass('ui-disabled');
-											$('#labelwucoordlat').addClass('ui-disabled');
-											$('#labelwucoordlong').addClass('ui-disabled');
-											$('#wucoordlat').addClass('ui-disabled');
-											$('#wucoordlong').addClass('ui-disabled');
-											$('#wucoordaddresssearch').addClass('ui-disabled');
-											$('#wustationid').removeClass('ui-disabled');
-										}
-										if ( click === "coord" ) {
-											$('#linkwundermap').addClass('ui-disabled');
-											$('#labelwustationid').addClass('ui-disabled');
-											$('#labelwucoord').removeClass('ui-disabled');
-											$('#labelwucoordlat').removeClass('ui-disabled');
-											$('#labelwucoordlong').removeClass('ui-disabled');
-											$('#wucoordlat').removeClass('ui-disabled');
-											$('#wucoordlong').removeClass('ui-disabled');
-											$('#wucoordaddresssearch').removeClass('ui-disabled');
-											$('#wustationid').addClass('ui-disabled');
-										}
-										if ( click === "autoip" ) {
-											$('#linkwundermap').addClass('ui-disabled');
-											$('#labelwustationid').addClass('ui-disabled');
-											$('#wustationid').addClass('ui-disabled');
-											$('#labelwucoord').addClass('ui-disabled');
-											$('#labelwucoordlat').addClass('ui-disabled');
-											$('#labelwucoordlong').addClass('ui-disabled');
-											$('#wucoordlat').addClass('ui-disabled');
-											$('#wucoordlong').addClass('ui-disabled');
-											$('#wucoordaddresssearch').addClass('ui-disabled');
-										}
-									}
-									</script>
+		<div data-role="collapsible" <TMPL_VAR R1COLLAPSED>>
+		<h3><TMPL_VAR SETTINGS.LABEL_MIROBOT> #1</h3>
+		<table class="formtable" border="0" width="100%" cellpadding="10">
+			<tr>
+				<td colspan=4">
+					<a id="btn" data-role="button" data-inline="true" data-mini="true" data-icon="info" 
+					href="<TMPL_VAR SENDCMD>?command=raw_command&option=miIO.info&robot=1&debug=1" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DEBUGINFO></a>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobotactive"><TMPL_VAR SETTINGS.LABEL_ROBOTACTIVE></label>
+				</td>
+				<td width="50%">
+					<TMPL_VAR R1ACTIVE>
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTACTIVE></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobotip"><TMPL_VAR SETTINGS.LABEL_ROBOTIP></label>
+				</td>
+				<td width="50%">
+					<input id="r1ip" name="r1ip" type="text" data-validation-rule="special:ipaddr" class="textfield" 
+						value="<TMPL_VAR ROBOT1.IP>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTIP>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTIP></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobottoken"><TMPL_VAR SETTINGS.LABEL_ROBOTTOKEN></label>
+				</td>
+				<td width="50%">
+					<input id="r1token" name="r1token" type="text" data-validation-rule="special:alphanumeric" class="textfield" 
+						value="<TMPL_VAR ROBOT1.TOKEN>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTTOKEN>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTTOKEN></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobottoken"><TMPL_VAR SETTINGS.LABEL_ROBOTDOCKRELEASE></label>
+				</td>
+				<td width="50%">
+					<input id="r1dockreleasetime" name="r1dockreleasetime" type="text" data-validation-rule="special:number" class="textfield" 
+						value="<TMPL_VAR ROBOT1.DOCKRELEASETIME>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTDOCKRELEASE>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTDOCKRELEASE></font>
+				</td>
+			</tr>
+		</table>
+		</div>
+
+		<div data-role="collapsible" <TMPL_VAR R2COLLAPSED>>
+		<h3><TMPL_VAR SETTINGS.LABEL_MIROBOT> #2</h3>
+		<table class="formtable" border="0" width="100%" cellpadding="10">
+			<tr>
+				<td colspan=4">
+					<a id="btn" data-role="button" data-inline="true" data-mini="true" data-icon="info" 
+					href="<TMPL_VAR SENDCMD>?command=raw_command&option=miIO.info&robot=2&debug=1" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DEBUGINFO></a>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobotactive"><TMPL_VAR SETTINGS.LABEL_ROBOTACTIVE></label>
+				</td>
+				<td width="50%">
+					<TMPL_VAR R2ACTIVE>
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTACTIVE></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobotip"><TMPL_VAR SETTINGS.LABEL_ROBOTIP></label>
+				</td>
+				<td width="50%">
+					<input id="r2ip" name="r2ip" type="text" data-validation-rule="special:ipaddr" class="textfield" 
+						value="<TMPL_VAR ROBOT2.IP>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTIP>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTIP></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobottoken"><TMPL_VAR SETTINGS.LABEL_ROBOTTOKEN></label>
+				</td>
+				<td width="50%">
+					<input id="r2token" name="r2token" type="text" data-validation-rule="special:alphanumeric" class="textfield" 
+						value="<TMPL_VAR ROBOT2.TOKEN>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTTOKEN>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTTOKEN></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobottoken"><TMPL_VAR SETTINGS.LABEL_ROBOTDOCKRELEASE></label>
+				</td>
+				<td width="50%">
+					<input id="r2dockreleasetime" name="r2dockreleasetime" type="text" data-validation-rule="special:number" class="textfield" 
+						value="<TMPL_VAR ROBOT2.DOCKRELEASETIME>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTDOCKRELEASE>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTDOCKRELEASE></font>
+				</td>
+			</tr>
+		</table>
+		</div>
+
+		<div data-role="collapsible" <TMPL_VAR R3COLLAPSED>>
+		<h3><TMPL_VAR SETTINGS.LABEL_MIROBOT> #3</h3>
+		<table class="formtable" border="0" width="100%" cellpadding="10">
+			<tr>
+				<td colspan=4">
+					<a id="btn" data-role="button" data-inline="true" data-mini="true" data-icon="info" 
+					href="<TMPL_VAR SENDCMD>?command=raw_command&option=miIO.info&robot=3&debug=1" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DEBUGINFO></a>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobotactive"><TMPL_VAR SETTINGS.LABEL_ROBOTACTIVE></label>
+				</td>
+				<td width="50%">
+					<TMPL_VAR R3ACTIVE>
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTACTIVE></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobotip"><TMPL_VAR SETTINGS.LABEL_ROBOTIP></label>
+				</td>
+				<td width="50%">
+					<input id="r3ip" name="r3ip" type="text" data-validation-rule="special:ipaddr" class="textfield" 
+						value="<TMPL_VAR ROBOT3.IP>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTIP>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTIP></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobottoken"><TMPL_VAR SETTINGS.LABEL_ROBOTTOKEN></label>
+				</td>
+				<td width="50%">
+					<input id="r3token" name="r3token" type="text" data-validation-rule="special:alphanumeric" class="textfield" 
+						value="<TMPL_VAR ROBOT3.TOKEN>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTTOKEN>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTTOKEN></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobottoken"><TMPL_VAR SETTINGS.LABEL_ROBOTDOCKRELEASE></label>
+				</td>
+				<td width="50%">
+					<input id="r3dockreleasetime" name="r3dockreleasetime" type="text" data-validation-rule="special:number" class="textfield" 
+						value="<TMPL_VAR ROBOT3.DOCKRELEASETIME>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTDOCKRELEASE>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTDOCKRELEASE></font>
+				</td>
+			</tr>
+		</table>
+		</div>
+
+		<div data-role="collapsible" <TMPL_VAR R4COLLAPSED>>
+		<h3><TMPL_VAR SETTINGS.LABEL_MIROBOT> #4</h3>
+		<table class="formtable" border="0" width="100%" cellpadding="10">
+			<tr>
+				<td colspan=4">
+					<a id="btn" data-role="button" data-inline="true" data-mini="true" data-icon="info" 
+					href="<TMPL_VAR SENDCMD>?command=raw_command&option=miIO.info&robot=4&debug=1" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DEBUGINFO></a>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobotactive"><TMPL_VAR SETTINGS.LABEL_ROBOTACTIVE></label>
+				</td>
+				<td width="50%">
+					<TMPL_VAR R4ACTIVE>
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTACTIVE></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobotip"><TMPL_VAR SETTINGS.LABEL_ROBOTIP></label>
+				</td>
+				<td width="50%">
+					<input id="r4ip" name="r4ip" type="text" data-validation-rule="special:ipaddr" class="textfield" 
+						value="<TMPL_VAR ROBOT4.IP>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTIP>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTIP></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobottoken"><TMPL_VAR SETTINGS.LABEL_ROBOTTOKEN></label>
+				</td>
+				<td width="50%">
+					<input id="r4token" name="r4token" type="text" data-validation-rule="special:alphanumeric" class="textfield" 
+						value="<TMPL_VAR ROBOT4.TOKEN>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTTOKEN>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTTOKEN></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobottoken"><TMPL_VAR SETTINGS.LABEL_ROBOTDOCKRELEASE></label>
+				</td>
+				<td width="50%">
+					<input id="r4dockreleasetime" name="r4dockreleasetime" type="text" data-validation-rule="special:number" class="textfield" 
+						value="<TMPL_VAR ROBOT4.DOCKRELEASETIME>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTDOCKRELEASE>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTDOCKRELEASE></font>
+				</td>
+			</tr>
+		</table>
+		</div>
+
+		<div data-role="collapsible" <TMPL_VAR R5COLLAPSED>>
+		<h3><TMPL_VAR SETTINGS.LABEL_MIROBOT> #5</h3>
+		<table class="formtable" border="0" width="100%" cellpadding="10">
+			<tr>
+				<td colspan=4">
+					<a id="btn" data-role="button" data-inline="true" data-mini="true" data-icon="info" 
+					href="<TMPL_VAR SENDCMD>?command=raw_command&option=miIO.info&robot=5&debug=1" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DEBUGINFO></a>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobotactive"><TMPL_VAR SETTINGS.LABEL_ROBOTACTIVE></label>
+				</td>
+				<td width="50%">
+					<TMPL_VAR R5ACTIVE>
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTACTIVE></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobotip"><TMPL_VAR SETTINGS.LABEL_ROBOTIP></label>
+				</td>
+				<td width="50%">
+					<input id="r5ip" name="r5ip" type="text" data-validation-rule="special:ipaddr" class="textfield" 
+						value="<TMPL_VAR ROBOT5.IP>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTIP>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTIP></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobottoken"><TMPL_VAR SETTINGS.LABEL_ROBOTTOKEN></label>
+				</td>
+				<td width="50%">
+					<input id="r5token" name="r5token" type="text" data-validation-rule="special:alphanumeric" class="textfield" 
+						value="<TMPL_VAR ROBOT5.TOKEN>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTTOKEN>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTTOKEN></font>
+				</td>
+			</tr>
+			<tr>
+				<td width="25%">
+					<label id="labelrobottoken"><TMPL_VAR SETTINGS.LABEL_ROBOTDOCKRELEASE></label>
+				</td>
+				<td width="50%">
+					<input id="r5dockreleasetime" name="r5dockreleasetime" type="text" data-validation-rule="special:number" class="textfield" 
+						value="<TMPL_VAR ROBOT5.DOCKRELEASETIME>" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_ROBOTDOCKRELEASE>">
+				</td>
+				<td width="5%" valign="middle">
+					&nbsp;
+				</td>
+				<td width="20%">
+					<font size="-1"><TMPL_VAR SETTINGS.HINT_ROBOTDOCKRELEASE></font>
+				</td>
+			</tr>
+		</table>
+		</div>
+
+	<p>
+		&nbsp;
+	</p>
+	<p>
+		<center>
+			<a id="btncancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=1"><TMPL_VAR SETTINGS.BUTTON_CANCEL></a>
+			<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_SAVE></button>
+		</center>
+	</p>
+
+</form>
+
+<script>
+// Add some attributes PERL::CGI doesn't provide
+$('select[name=cron').attr('data-mini','true');
+$('#getdata').attr('data-role','flipswitch');
+$('#sendudp').attr('data-role','flipswitch');
+$('#r1active').attr('data-role','flipswitch');
+$('#r2active').attr('data-role','flipswitch');
+$('#r3active').attr('data-role','flipswitch');
+$('#r4active').attr('data-role','flipswitch');
+$('#r5active').attr('data-role','flipswitch');
+// Form Validation
+$( document ).ready(function()
+{
+	validate_enable('#udpport');
+	validate_enable('#r1ip');
+	validate_enable('#r1token');
+	validate_enable('#r1dockreleasetime');
+	validate_enable('#r2ip');
+	validate_enable('#r2token');
+	validate_enable('#r2dockreleasetime');
+	validate_enable('#r3ip');
+	validate_enable('#r3token');
+	validate_enable('#r3dockreleasetime');
+	validate_enable('#r4ip');
+	validate_enable('#r4token');
+	validate_enable('#r4dockreleasetime');
+	validate_enable('#r5ip');
+	validate_enable('#r5token');
+	validate_enable('#r5dockreleasetime');
+});
+</script>
 </TMPL_IF>
+
 <TMPL_IF FORM2>
-<table class="formtable" border="1" width="100%" cellpadding="10">
-	<tr>
-		<td colspan=5 width="75%" valign="middle">
-		<h2><TMPL_VAR SETTINGS.LABEL_ROBOTCOMMANDS></h2>
-		</td>
-	</tr>
-	<tr>
-		<td width="20%" align="center">
-										<b><TMPL_VAR SETTINGS.LABEL_MIROBOT> #1</b>
-		</td>
-		<td width="20%" align="center">
-										<b><TMPL_VAR SETTINGS.LABEL_MIROBOT> #2</b>
-		</td>
-		<td width="20%" align="center">
-										<b><TMPL_VAR SETTINGS.LABEL_MIROBOT> #3</b>
-		</td>
-		<td width="20%" align="center">
-										<b><TMPL_VAR SETTINGS.LABEL_MIROBOT> #4</b>
-		</td>
-		<td width="20%" align="center">
-										<b><TMPL_VAR SETTINGS.LABEL_MIROBOT> #5</b>
-		</td>
-	</tr>
+<table data-role="table" data-mode="columntoggle" data-filter="true" data-input="#filterTable-input" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-btn-text="<TMPL_VAR SETTINGS.BUTTON_SHOWCOLS>">
+	<thead>
+		<tr class="ui-bar-d">
+										<th data-priority="1"><TMPL_VAR SETTINGS.LABEL_MIROBOT> #1</th>
+										<th data-priority="2"><TMPL_VAR SETTINGS.LABEL_MIROBOT> #2</th>
+										<th data-priority="3"><TMPL_VAR SETTINGS.LABEL_MIROBOT> #3</th>
+										<th data-priority="4"><TMPL_VAR SETTINGS.LABEL_MIROBOT> #4</th>
+										<th data-priority="5"><TMPL_VAR SETTINGS.LABEL_MIROBOT> #5</th>
+		</tr>
+	</thead>
+	<tbody>
 	<tr>
 		<td width="20%" align="center">
 											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="info" 
@@ -566,131 +904,158 @@
 																			href="<TMPL_VAR SENDCMD>?command=consumable_reset&option=sensor_dirty_time&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_CONSUMABLERESETSENSOR></a>
 		</td>
 	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_dnd&option=0%200%2023%2059&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DNDON></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_dnd&option=0%200%2023%2059&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DNDON></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_dnd&option=0%200%2023%2059&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DNDON></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_dnd&option=0%200%2023%2059&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DNDON></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=set_dnd&option=0%200%2023%2059&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DNDON></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=dnd_disable&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DNDOFF></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=dnd_disable&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DNDOFF></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=dnd_disable&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DNDOFF></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=dnd_disable&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DNDOFF></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=dnd_disable&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DNDOFF></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=spot&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_SPOT></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=spot&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_SPOT></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=spot&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_SPOT></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=spot&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_SPOT></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=spot&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_SPOT></a>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=manual_control_once&option=0%200.27%20<TMPL_VAR DOCKRELEASETIME1>&robot=1&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DOCKRELEASE></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=manual_control_once&option=0%200.27%20<TMPL_VAR DOCKRELEASETIME2>&robot=2&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DOCKRELEASE></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=manual_control_once&option=0%200.27%20<TMPL_VAR DOCKRELEASETIME3>&robot=3&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DOCKRELEASE></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=manual_control_once&option=0%200.27%20<TMPL_VAR DOCKRELEASETIME4>&robot=4&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DOCKRELEASE></a>
+		</td>
+		<td width="20%" align="center">
+											<a id="btn" data-role="button" data-inline="false" data-mini="true" data-icon="power" 
+																			href="<TMPL_VAR SENDCMD>?command=manual_control_once&option=0%200.27%20<TMPL_VAR DOCKRELEASETIME5>&robot=5&debug=0" target="_blank"><TMPL_VAR SETTINGS.BUTTON_DOCKRELEASE></a>
+		</td>
+	</tr>
 </table>
 </TMPL_IF>
 <TMPL_IF FORM3>
 									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=3">
 										<input type="hidden" name="saveformdata3" value="1">
 											<div class="form-group">
-												<table class="formtable" border="0" width="100%" cellpadding="10">
+												<center>
+												<table class="formtable" border="0" width="80%" cellpadding="10">
 													<tr>
-														<td colspan=3 width="75%" valign="middle">
-														<h2><TMPL_VAR SETTINGS.LABEL_CLOUDEMU></h2>
+														<td colspan=3>
+														<TMPL_VAR SETTINGS.HINT_SOUNDPACK>
 														</td>
-														<td align="right">
+													</tr>
+													<tr>
+														<td colspan=3>
 														&nbsp;
 														</td>
 													</tr>
 													<tr>
-														<td width="25%">
-															<label id="labelemu"><TMPL_VAR SETTINGS.LABEL_ENABLECLOUDEMU></label>
+														<td width="20%">
+															<label id="labelsoundpack"><TMPL_VAR SETTINGS.LABEL_SOUNDPACK></label>
 														</td>
-														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-															<td width="20%">
+														<td width="70%">
 															<fieldset>
-															<TMPL_VAR EMU>
+															<TMPL_VAR SOUNDPACK>
 															</fieldset>
-															</td>
-															<td>
-															<font color="red" size="-1"><b><TMPL_VAR EMUWARNING></b></font>
-															</td>
-															</tr>
-															</table>
 														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
+														<td width="10%">
+															<div id="custom-border-radius">
+																<a href="#"  onClick="preview();" data-role="button" data-inline="true" data-mini="true"><TMPL_VAR SETTINGS.BUTTON_PLAY></a>
+															</div>
 														</td>
+													</tr>
+													<tr>
 														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_CLOUDEMU></font>
+															<label id="labelrobot"><TMPL_VAR SETTINGS.LABEL_INSTALLTO_ROBOT></label>
 														</td>
-													</tr>
-													<tr>
-														<td colspan=4>
-														&nbsp;
+														<td width="70%">
+															<fieldset>
+															<TMPL_VAR ROBOTS>
+															</fieldset>
 														</td>
-													</tr>
-													<tr>
-														<td colspan=3 width="75%" valign="middle">
-														<h2><TMPL_VAR SETTINGS.LABEL_WEBSITE></h2>
+														<td>
 														</td>
-														<td align="right">
-														&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-														<label id="labelURL"><TMPL_VAR SETTINGS.LABEL_LINK></label>
-														</td>
-														<td width="50%">
-														<a href="<TMPL_VAR WEBSITE>" target=_blank"><TMPL_VAR WEBSITE></a>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labeltheme"><TMPL_VAR SETTINGS.LABEL_THEME></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR THEME>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-														<a href="#" data-role="button" id="preview1" data-inline="true" data-mini="true" onClick="preview();">
-														<font size="-1"><TMPL_VAR SETTINGS.LABEL_PREVIEW></font>
-														</a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labeliconset"><TMPL_VAR SETTINGS.LABEL_ICONSET></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR ICONSET>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-														<a href="#" data-role="button" id="preview2" data-inline="true" data-mini="true" onClick="preview();">
-														<font size="-1"><TMPL_VAR SETTINGS.LABEL_PREVIEW></font>
-														</a>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=4>
-														&nbsp;
-														</td>
-													</tr>
 												</table>
+												</center>
 											</div>
 									<p>
 										&nbsp;
 									</p>
 									<p>
 										<center>
-											<a id="btncancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=3"><TMPL_VAR SETTINGS.BUTTON_CANCEL></a>
-												<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_SAVE></button>
+											<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_INSTALL_SOUNDPACK></button>
 										</center>
 									</form>
 									</p>
 									<script>
 									// Add some attributes PERL::CGI doesn't provide
-									$('select[name=emu]').attr('data-role','flipswitch');
-									$('select[name=theme]').attr('data-mini','true');
-									$('select[name=iconset]').attr('data-mini','true');
+									$('select[name=soundpack]').attr('data-mini','true');
+									$('select[name=robot').attr('data-mini','true');
 
 									// Preview Link for theme and iconset
 									function preview() {
-										var url = './show.cgi?theme=' + $('#theme').val() + '&iconset=' + $('#iconset').val();
+										var url = '/plugins/mirobot2lox-ng/sounds/sample_' + $('#soundpack').val() + '.wav';
 										window.open(url, 'NewWindow');
 									}
 									</script>
@@ -731,6 +1096,71 @@
 		<td align="center">
 		<p>
 		<a id="btnok" data-role="button" data-inline="true" data-mini="true" data-icon="check" href="./index.cgi?form=<TMPL_VAR FORMNO>"><TMPL_VAR SETTINGS.BUTTON_OK></a>
+		</p>
+		</td>
+	</tr>
+	</table>
+</center>
+</TMPL_IF>
+<TMPL_IF INSTALLSOUNDPACK1>
+<center>
+	<table border=0>
+	<tr>
+		<td align="center">
+		<h2><TMPL_VAR SETTINGS.HINT_QUESTION></h2>
+		<p>
+		<TMPL_VAR SETTINGS.HINT_INSTALL_SOUNDPACK>
+		</p>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+		<p>
+		<table>
+		<tr>
+		<td>
+		<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=3">
+			<input type="hidden" name="saveformdata4" value="1">
+			<input type="hidden" name="soundpack" value="<TMPL_VAR SOUNDPACK>">
+			<input type="hidden" name="robot" value="<TMPL_VAR ROBOT>">
+			<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_INSTALL_SOUNDPACK></button>
+		</form>
+		</td>
+		<td>
+		<a id="btcancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=3"><TMPL_VAR SETTINGS.BUTTON_CANCEL></a>
+		</td>
+		</tr>
+		</table>
+		</p>
+		</td>
+	</tr>
+	</table>
+</center>
+</TMPL_IF>
+<TMPL_IF INSTALLSOUNDPACK2>
+<center>
+	<table border=0>
+	<tr>
+		<td align="center">
+		<h2><TMPL_VAR SETTINGS.HINT_OK></h2>
+		<p>
+		<TMPL_VAR SETTINGS.HINT_INSTALL_SOUNDPACK2>
+		</p>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+		<p>
+		<table>
+		<tr>
+		<td>
+		<a id="btok" data-role="button" data-inline="true" data-mini="true" data-icon="check" href="./index.cgi?form=3"><TMPL_VAR SETTINGS.BUTTON_OK></a>
+		</td>
+		<td>
+		<a id="btlogfile" data-role="button" data-inline="true" data-mini="true" data-icon="bars" target="_blank" href="/admin/system/tools/logfile.cgi?logfile=mirobosoundpackinstall.log&header=html&format=template"><TMPL_VAR SETTINGS.BUTTON_LOGFILE></a>
+		</td>
+		</tr>
+		</table>
 		</p>
 		</td>
 	</tr>

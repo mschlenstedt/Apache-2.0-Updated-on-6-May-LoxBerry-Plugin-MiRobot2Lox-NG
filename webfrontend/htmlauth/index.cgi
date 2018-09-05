@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright 2018 Michael Schlenstedt, michael@loxberry.de
+# Copyright 2016 Michael Schlenstedt, michael@loxberry.de
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@
 use Config::Simple '-strict';
 use CGI::Carp qw(fatalsToBrowser);
 use CGI;
+use LWP::UserAgent;
+use JSON qw( decode_json );
 use LoxBerry::System;
 use LoxBerry::Web;
 #use warnings;
@@ -43,7 +45,7 @@ $cgi->import_names('R');
 my $version = LoxBerry::System::pluginversion();
 
 # Settings
-my $cfg = new Config::Simple("$lbpconfigdir/mirobo2lox.cfg");
+my $cfg = new Config::Simple("$lbpconfigdir/mirobot2lox.cfg");
 
 #########################################################################
 # Parameter
@@ -67,262 +69,64 @@ my $template = HTML::Template->new(
 # Language
 my %L = LoxBerry::Web::readlanguage($template, "language.ini");
 
-# Save Form 1 (Wunderground)
+# Save Form 1 
 if ($R::saveformdata1) {
 	
   	$template->param( FORMNO => '1' );
-	$R::wucoordlat =~ tr/,/./;
-	$R::wucoordlong =~ tr/,/./;
-	$R::darkskycoordlat =~ tr/,/./;
-	$R::darkskycoordlong =~ tr/,/./;
 
-	# Check for Station : WUNDERGROUND
-	if ($R::weatherservice eq "wu") {
-		our $url = $cfg->param("WUNDERGROUND.URL");
-		our $querystation;
-		our $wuquerystation;
-		$wuquerystation = $querystation;
-		if ($R::wustationtyp eq "statid") {
-			$querystation = $R::wustationid;
-		} 
-		elsif ($R::wustationtyp eq "coord") {
-			$querystation = $R::wucoordlat . "," . $R::wucoordlong;
-		}
-		else {
-			$querystation = "autoip";
-		}
-		# 1. attempt to query Wunderground
-		&wuquery;
-		$found = 0;
-		if ( $decoded_json->{current_observation}->{station_id} ) {
-			$found = 1;
-			$wuquerystation = $querystation;
-		}
-		if ( !$found && $decoded_json->{response}->{error}->{type} eq "keynotfound" ) {
-			$error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>WU Error Message:</b> $decoded_json->{response}->{error}->{description}";
-			&error;
-			exit;
-		}
-		# 2. attempt to query Wunderground
-		# Before giving up test if it is a PWS
-		if (!$found) {
-			$querystation = "pws:$querystation";
-			&wuquery;
-			if ( $decoded_json->{current_observation}->{station_id} ) {
-				$found = 1;
-				$wuquerystation = $querystation;
-			}
-		}
-		# 3. attempt to query Wunderground
-		# Before giving up test if it is a ZMW
-		if (!$found) {
-			$querystation = "zmw:$querystation";
-			&wuquery;
-			if ( $decoded_json->{current_observation}->{station_id} ) {
-				$found = 1;
-				$wuquerystation = $querystation;
-			}
-		}
-		# That was my last attempt - if we haven't found the station, we are giving up.
-		if (!$found) {
-			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
-			&error;
-			exit;
-		}
-	}
-	
-	# Check for Station : DARKSKY
-	if ($R::weatherservice eq "darksky") {
-		our $url = $cfg->param("DARKSKY.URL");
-		our $querystation = $R::darkskycoordlat . "," . $R::darkskycoordlong;
-		# 1. attempt to query Darksky
-		&darkskyquery;
-		$found = 0;
-		if ( $decoded_json->{latitude} ) {
-			$found = 1;
-		}
-		if ( !$found ) {
-			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
-			&error;
-			exit;
-		}
-	}
-	
 	# OK - now installing...
 
 	# Write configuration file(s)
-	$cfg->param("WUNDERGROUND.APIKEY", "$R::wuapikey");
-	$cfg->param("WUNDERGROUND.STATIONTYP", "$R::wustationtyp");
-	$cfg->param("WUNDERGROUND.STATIONID", "$wuquerystation");
-	$cfg->param("WUNDERGROUND.COORDLAT", "$R::wucoordlat");
-	$cfg->param("WUNDERGROUND.COORDLONG", "$R::wucoordlong");
-	$cfg->param("WUNDERGROUND.LANG", "$R::wulang");
+	$cfg->param("MAIN.SENDUDP", "$R::sendudp");
+	$cfg->param("MAIN.UDPPORT", "$R::udpport");
+	$cfg->param("MAIN.MS", "$R::ms");
+	$cfg->param("MAIN.CRON", "$R::cron");
+	$cfg->param("MAIN.GETDATA", "$R::getdata");
 
-	$cfg->param("DARKSKY.APIKEY", "$R::darkskyapikey");
-	$cfg->param("DARKSKY.COORDLAT", "$R::darkskycoordlat");
-	$cfg->param("DARKSKY.COORDLONG", "$R::darkskycoordlong");
-	$cfg->param("DARKSKY.LANG", "$R::darkskylang");
-	$cfg->param("DARKSKY.STATION", "$R::darkskycity");
-	$cfg->param("DARKSKY.COUNTRY", "$R::darkskycountry");
-
-	$cfg->param("SERVER.GETDATA", "$R::getdata");
-	$cfg->param("SERVER.CRON", "$R::cron");
-	$cfg->param("SERVER.METRIC", "$R::metric");
-	$cfg->param("SERVER.WEATHERSERVICE", "$R::weatherservice");
+	for (my $i=1;$i<=5;$i++) {
+		$cfg->param("ROBOT$i" . ".ACTIVE", ${"R::r$i" . "active"} );
+		$cfg->param("ROBOT$i" . ".IP", ${"R::r$i" . "ip"} );
+		$cfg->param("ROBOT$i" . ".TOKEN", ${"R::r$i" . "token"} );
+		$cfg->param("ROBOT$i" . ".DOCKRELEASETIME", ${"R::r$i" . "dockreleasetime"} );
+	}
 
 	$cfg->save();
 		
 	# Create Cronjob
-	if ($R::getdata eq "1") 
-	{
-	  if ($R::cron eq "1") 
-	  {
-	    system ("ln -s $lbpbindir/fetch.pl $lbhomedir/system/cron/cron.01min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.03min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.05min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.10min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.15min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.30min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.hourly/$lbpplugindir");
-	  }
-	  if ($R::cron eq "3") 
-	  {
-	    system ("ln -s $lbpbindir/fetch.pl $lbhomedir/system/cron/cron.03min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.01min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.05min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.10min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.15min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.30min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.hourly/$lbpplugindir");
-	  }
-	  if ($R::cron eq "5") 
-	  {
-	    system ("ln -s $lbpbindir/fetch.pl $lbhomedir/system/cron/cron.05min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.01min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.03min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.10min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.15min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.30min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.hourly/$lbpplugindir");
-	  }
-	  if ($R::cron eq "10") 
-	  {
-	    system ("ln -s $lbpbindir/fetch.pl $lbhomedir/system/cron/cron.10min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.1min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.3min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.5min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.15min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.30min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.hourly/$lbpplugindir");
-	  }
-	  if ($R::cron eq "15") 
-	  {
-	    system ("ln -s $lbpbindir/fetch.pl $lbhomedir/system/cron/cron.15min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.01min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.03min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.05min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.10min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.30min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.hourly/$lbpplugindir");
-	  }
-	  if ($R::cron eq "30") 
-	  {
-	    system ("ln -s $lbpbindir/fetch.pl $lbhomedir/system/cron/cron.30min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.01min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.03min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.05min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.10min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.15min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.hourly/$lbpplugindir");
-	  }
-	  if ($R::cron eq "60") 
-	  {
-	    system ("ln -s $lbpbindir/fetch.pl $lbhomedir/system/cron/cron.hourly/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.01min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.03min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.05min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.10min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.15min/$lbpplugindir");
-	    unlink ("$lbhomedir/system/cron/cron.30min/$lbpplugindir");
-	  }
-	} 
-	else
-	{
-	  unlink ("$lbhomedir/system/cron/cron.01min/$lbpplugindir");
-	  unlink ("$lbhomedir/system/cron/cron.03min/$lbpplugindir");
-	  unlink ("$lbhomedir/system/cron/cron.05min/$lbpplugindir");
-	  unlink ("$lbhomedir/system/cron/cron.10min/$lbpplugindir");
-	  unlink ("$lbhomedir/system/cron/cron.15min/$lbpplugindir");
-	  unlink ("$lbhomedir/system/cron/cron.30min/$lbpplugindir");
-	  unlink ("$lbhomedir/system/cron/cron.hourly/$lbpplugindir");
-	}
+	open (F,">/tmp/$lbpplugindir.crontab");
 
-	# Template output
-	&save;
-
-	exit;
-
-}
-
-# Save Form 2 (Miniserver)
-if ($R::saveformdata2) {
-	
-  	$template->param( FORMNO => '2' );
-
-	my $dfc;
-	for (my $i=1;$i<=8;$i++) {
-		if ( ${"R::dfc$i"} ) {
-			if ( !$dfc ) {
-				$dfc = $i;
-			} else {
-				$dfc = $dfc . ";" . $i;
-			}
+	if ( $R::getdata ) {
+		print F "# minute hour day_of_month month day_of_week user command\n";
+		if ( $R::cron eq "30" ) {
+			print F "# Every 30 seconds\n";
+			print F "* * * * * loxberry $lbpbindir/grabber.pl\n";
+			print F "* * * * * loxberry ( sleep 30; $lbpbindir/grabber.pl )\n";
 		}
-	}
-	my $hfc;
-	for ($i=1;$i<=48;$i++) {
-		if ( ${"R::hfc$i"} ) {
-			if ( !$hfc ) {
-				$hfc = $i;
-			} else {
-				$hfc = $hfc . ";" . $i;
-			}
+		if ( $R::cron eq "60" ) {
+			print F "# Every 60 seconds\n";
+			print F "* * * * * loxberry $lbpbindir/grabber.pl\n";
 		}
-	}
-	
-	# Write configuration file(s)
-	$cfg->param("SERVER.SENDDFC", "$dfc");
-	$cfg->param("SERVER.SENDHFC", "$hfc");
-	$cfg->param("SERVER.SENDUDP", "$R::sendudp");
-	$cfg->param("SERVER.UDPPORT", "$R::udpport");
-
-	$cfg->save();
-	
-	# Template output
-	&save;
-
-	exit;
-
-}
-
-# Save Form 3 (Website)
-if ($R::saveformdata3) {
-	
-  	$template->param( FORMNO => '3' );
-
-	# Write configuration file(s)
-	$cfg->param("SERVER.EMU", "$R::emu");
-	$cfg->param("WEB.THEME", "$R::theme");
-	$cfg->param("WEB.ICONSET", "$R::iconset");
-
-	$cfg->save();
-	
-	# Enable/Disable CloudEmu
-	if ( $R::emu ) {
-		system("sudo $lbpbindir/cloudemu enable > /dev/null 2>&1");
+		if ( $R::cron eq "90" ) {
+			print F "# Every 90 seconds\n";
+			print F "*/3 * * * * loxberry $lbpbindir/grabber.pl\n";
+			print F "* * * * * loxberry ( sleep 90; $lbpbindir/grabber.pl )\n";
+		}
+		if ( $R::cron eq "120" ) {
+			print F "# Every 120 seconds\n";
+			print F "*/2 * * * * loxberry $lbpbindir/grabber.pl\n";
+		}
+		if ( $R::cron eq "180" ) {
+			print F "# Every 180 seconds\n";
+			print F "*/3 * * * * loxberry $lbpbindir/grabber.pl\n";
+		}
 	} else {
-		system("sudo $lbpbindir/cloudemu disable > /dev/null 2>&1");
+		print F "# minute hour day_of_month month day_of_week user command\n";
 	}
+
+	close(F);
+
+	system ("sudo $lbssbindir/installcrontab.sh $lbpplugindir /tmp/$lbpplugindir.crontab >/dev/null 2>&1");
+	unlink ("/tmp/$lbpplugindir.crontab");
 
 	# Template output
 	&save;
@@ -331,22 +135,83 @@ if ($R::saveformdata3) {
 
 }
 
+# Install Soundpack - Step 1
+if ($R::saveformdata3) {
+
+	$template->param( "SOUNDPACK", $R::soundpack );
+	$template->param( "ROBOT", $R::robot );
+	&installsoundpack1;
+
+}
+
+# Install Soundpack - Step 2
+if ($R::saveformdata4) {
+
+	my $logfile = "/tmp/mirobosoundpackinstall.log";
+	my $i = $R::robot;
+	my $ip = $cfg->param( "ROBOT$i" . ".IP");
+	my $token = $cfg->param( "ROBOT$i" . ".TOKEN");
+	my $urlpkg = "https://raw.githubusercontent.com/mschlenstedt/MiRobot-Soundpacks/master/soundpacks/$R::soundpack" . ".pkg";
+	my $urlmd5 = "https://raw.githubusercontent.com/mschlenstedt/MiRobot-Soundpacks/master/soundpacks/$R::soundpack" . ".md5";
+
+	# Output template
+	&installsoundpack2;
+
+	# Without the following workaround
+	# the script cannot be executed as
+	# background process via CGI
+	my $pid = fork();
+	die "Fork failed: $!" if !defined $pid;
+
+	if ($pid == 0) {
+
+		#print "Content-Type: text/plain\n\n";
+
+		# Grab MD5Sum
+		#my $md5sum = `$bins->{CURL} --connect-timeout 10 --max-time 60 --retry 5 -LfksS $urlmd5 2>&1`;
+		my $md5sum = `curl --connect-timeout 10 --max-time 60 --retry 5 -LfksS $urlmd5`;
+		$md5sum =~ s/ .*//; # Sum ist vor 1. Leerzeichen
+
+		# do this in the child
+		open STDIN, "</dev/null";
+		open STDOUT, ">$logfile";
+		open STDERR, ">/dev/null";
+
+		print "Command: mirobo --ip $ip --token $token install_sound $urlpkg $md5sum\n";
+		print "Please be patient - may take some seconds... Wait until you see 'Installation of sid xxxx is complete!'.\n\n";
+
+		# Do the installation
+		system ("export LC_ALL=C.UTF-8; export LANG=C.UTF-8; mirobo --ip $ip --token $token install_sound $urlpkg $md5sum 2>&1");
+
+
+	} # End Child process
+
+	exit;
+
+}
+
+#
 # Navbar
+#
+
 our %navbar;
-$navbar{1}{Name} = "$L{'SETTINGS.LABEL_SERVER_SETTINGS'}";
+$navbar{1}{Name} = "$L{'SETTINGS.LABEL_SETTINGS'}";
 $navbar{1}{URL} = 'index.cgi?form=1';
 
-$navbar{2}{Name} = "$L{'SETTINGS.LABEL_MINISERVERCONNECTION'}";
+$navbar{2}{Name} = "$L{'SETTINGS.LABEL_ROBOTCOMMANDS'}";
 $navbar{2}{URL} = 'index.cgi?form=2';
 
-$navbar{3}{Name} = "$L{'SETTINGS.LABEL_CLOUDEMU'} / $L{'SETTINGS.LABEL_WEBSITE'}";
+$navbar{3}{Name} = "$L{'SETTINGS.LABEL_SOUNDPACKS'}";
 $navbar{3}{URL} = 'index.cgi?form=3';
 
 $navbar{4}{Name} = "$L{'SETTINGS.LABEL_LOG'}";
-$navbar{4}{URL} = "/admin/system/tools/logfile.cgi?logfile=plugins/$lbpplugindir/weather4lox.log&header=html&format=template&only=once";
+$navbar{4}{URL} = "/admin/system/tools/logfile.cgi?logfile=plugins/$lbpplugindir/mirobot2lox.log&header=html&format=template&only=once";
 $navbar{4}{target} = '_blank';
 
-# Menu: Server
+#
+# Menu: Settings
+#
+
 if ($R::form eq "1" || !$R::form) {
 
   $navbar{1}{active} = 1;
@@ -354,36 +219,6 @@ if ($R::form eq "1" || !$R::form) {
 
   my @values;
   my %labels;
-
-  # Weather Service
-  @values = ('darksky', 'wu' );
-  %labels = (
-        'darksky' => 'Dark Sky',
-        'wu' => 'Wunderground',
-    );
-  my $wservice = $cgi->popup_menu(
-        -name    => 'weatherservice',
-        -id      => 'weatherservice',
-        -values  => \@values,
-	-labels  => \%labels,
-	-default => $cfg->param('SERVER.WEATHERSERVICE'),
-    );
-  $template->param( WEATHERSERVICE => $wservice );
-
-  # Units
-  @values = ('1', '0' );
-  %labels = (
-        '1' => $L{'SETTINGS.LABEL_METRIC'},
-        '0' => $L{'SETTINGS.LABEL_IMPERIAL'},
-    );
-  my $metric = $cgi->popup_menu(
-        -name    => 'metric',
-        -id      => 'metric',
-        -values  => \@values,
-	-labels  => \%labels,
-	-default => $cfg->param('SERVER.METRIC'),
-    );
-  $template->param( METRIC => $metric );
 
   # GetData
   @values = ('0', '1' );
@@ -396,203 +231,39 @@ if ($R::form eq "1" || !$R::form) {
         -id      => 'getdata',
         -values  => \@values,
 	-labels  => \%labels,
-	-default => $cfg->param('SERVER.GETDATA'),
+	-default => $cfg->param('MAIN.GETDATA'),
     );
   $template->param( GETDATA => $getdata );
 
   # Cron
-  @values = ('1', '3', '5', '10', '15', '30', '60' );
+  @values = ('30', '60', '90', '120', '180' );
   %labels = (
-        '1' => $L{'SETTINGS.LABEL_1MINUTE'},
-        '3' => $L{'SETTINGS.LABEL_3MINUTE'},
-        '5' => $L{'SETTINGS.LABEL_5MINUTE'},
-        '10' => $L{'SETTINGS.LABEL_10MINUTE'},
-        '15' => $L{'SETTINGS.LABEL_15MINUTE'},
-        '30' => $L{'SETTINGS.LABEL_30MINUTE'},
-        '60' => $L{'SETTINGS.LABEL_60MINUTE'},
+        '30' => $L{'SETTINGS.LABEL_30SECONDS'},
+        '60' => $L{'SETTINGS.LABEL_60SECONDS'},
+        '90' => $L{'SETTINGS.LABEL_90SECONDS'},
+        '120' => $L{'SETTINGS.LABEL_120SECONDS'},
+        '180' => $L{'SETTINGS.LABEL_180SECONDS'},
     );
   my $cron = $cgi->popup_menu(
         -name    => 'cron',
         -id      => 'cron',
         -values  => \@values,
 	-labels  => \%labels,
-	-default => $cfg->param('SERVER.CRON'),
+	-default => $cfg->param('MAIN.CRON'),
     );
   $template->param( CRON => $cron );
 
-  # DarkSky Language
-  @values = ('ar', 'az', 'be', 'bg', 'bs', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hr', 'hu', 'id', 'is', 'it', 'ja', 'ka', 'ko', 'kw', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tet', 'tr', 'uk', 'x-pig-latin', 'zh', 'zh-tw');
+  # Miniservers
+  my $mshtml = LoxBerry::Web::mslist_select_html( 
+	  FORMID => 'ms',
+	  SELECTED => $cfg->param('MAIN.MS'),
+	  DATA_MINI => 1,
+	  LABEL => " ",
+  );
+  $template->param('MS', $mshtml);
 
-  %labels = (
-	'ar' => 'Arabic',
-	'az' => 'Azerbaijani',
-	'be' => 'Belarusian',
-	'bg' => 'Bulgarian',
-	'bs' => 'Bosnian',
-	'ca' => 'Catalan',
-	'cs' => 'Czech',
-	'da' => 'Danish',
-	'de' => 'German',
-	'el' => 'Greek',
-	'en' => 'English',
-	'es' => 'Spanish',
-	'et' => 'Estonian',
-	'fi' => 'Finnish',
-	'fr' => 'French',
-	'hr' => 'Croatian',
-	'hu' => 'Hungarian',
-	'id' => 'Indonesian',
-	'is' => 'Icelandic',
-	'it' => 'Italian',
-	'ja' => 'Japanese',
-	'ka' => 'Georgian',
-	'ko' => 'Korean',
-	'kw' => 'Cornish',
-	'nb' => 'Norwegian Bokmål',
-	'nl' => 'Dutch',
-	'pl' => 'Polish',
-	'pt' => 'Portuguese',
-	'ro' => 'Romanian',
-	'ru' => 'Russian',
-	'sk' => 'Slovak',
-	'sl' => 'Slovenian',
-	'sr' => 'Serbian',
-	'sv' => 'Swedish',
-	'tet' => 'Tetum',
-	'tr' => 'Turkish',
-	'uk' => 'Ukrainian',
-	'x-pig-latin' => 'Igpay Atinlay',
-	'zh' => 'simplified Chinese',
-	'zh-tw' => 'traditional Chinese',
-    );
-  my $darkskylang = $cgi->popup_menu(
-        -name    => 'darkskylang',
-        -id      => 'darkskylang',
-        -values  => \@values,
-	-labels  => \%labels,
-	-default => $cfg->param('DARKSKY.LANG'),
-    );
-  $template->param( DARKSKYLANG => $darkskylang );
-  
-  # Statiotyp
-  @values = ('statid', 'coord', 'autoip');
-  %labels = (
-        'statid' => $L{'SETTINGS.LABEL_STATIONID'},
-        'coord' => $L{'SETTINGS.LABEL_COORDINATES'},
-        'autoip' => $L{'SETTINGS.LABEL_IPADDRESS'},
-    );
-  my $stationtyp = $cgi->radio_group(
-        -name    => 'wustationtyp',
-        -id      => 'wustationtyp',
-        -values  => \@values,
-	-labels  => \%labels,
-	-default => $cfg->param('WUNDERGROUND.STATIONTYP'),
-	-onClick => "disable()",
-    );
-  $template->param( WUSTATIONTYP => $stationtyp );
-
-  # WU Language
-  @values = ('AF', 'AL', 'AR', 'HY', 'AZ', 'EU', 'BY', 'BU', 'LI', 'MY', 'CA', 'CN', 'TW', 'CR', 'CZ', 'DK', 'DV', 'NL', 'EN', 'EO', 'ET', 'FA', 'FI', 'FR', 'FC', 'GZ', 'DL', 'KA', 'GR', 'GU', 'HT', 'IL', 'HI', 'HU', 'IS', 'IO', 'ID', 'IR', 'IT', 'JP', 'JW', 'KM', 'KR', 'KU', 'LA', 'LV', 'LT', 'ND', 'MK', 'MT', 'GM', 'MI', 'MR', 'MN', 'NO', 'OC', 'PS', 'GN', 'PL', 'BR', 'PA', 'RO', 'RU', 'SR', 'SK', 'SL', 'SP', 'SI', 'SW', 'CH', 'TL', 'TT', 'TH', 'TR', 'TK', 'UA', 'UZ', 'VU', 'CY', 'SN', 'JI', 'YI');
-  %labels = (
-	'AF' => 'Afrikaans',
-	'AL' => 'Albanian',
-	'AR' => 'Arabic',
-	'HY' => 'Armenian',
-	'AZ' => 'Azerbaijani',
-	'EU' => 'Basque',
-	'BY' => 'Belarusian',
-	'BU' => 'Bulgarian',
-	'LI' => 'British English',
-	'MY' => 'Burmese',
-	'CA' => 'Catalan',
-	'CN' => 'Chinese - Simplified',
-	'TW' => 'Chinese - Traditional',
-	'CR' => 'Croatian',
-	'CZ' => 'Czech',
-	'DK' => 'Danish',
-	'DV' => 'Dhivehi',
-	'NL' => 'Dutch',
-	'EN' => 'English',
-	'EO' => 'Esperanto',
-	'ET' => 'Estonian',
-	'FA' => 'Farsi',
-	'FI' => 'Finnish',
-	'FR' => 'French',
-	'FC' => 'French Canadian',
-	'GZ' => 'Galician',
-	'DL' => 'German',
-	'KA' => 'Georgian',
-	'GR' => 'Greek',
-	'GU' => 'Gujarati',
-	'HT' => 'Haitian Creole',
-	'IL' => 'Hebrew',
-	'HI' => 'Hindi',
-	'HU' => 'Hungarian',
-	'IS' => 'Icelandic',
-	'IO' => 'Ido',
-	'ID' => 'Indonesian',
-	'IR' => 'Irish Gaelic',
-	'IT' => 'Italian',
-	'JP' => 'Japanese',
-	'JW' => 'Javanese',
-	'KM' => 'Khmer',
-	'KR' => 'Korean',
-	'KU' => 'Kurdish',
-	'LA' => 'Latin',
-	'LV' => 'Latvian',
-	'LT' => 'Lithuanian',
-	'ND' => 'Low German',
-	'MK' => 'Macedonian',
-	'MT' => 'Maltese',
-	'GM' => 'Mandinka',
-	'MI' => 'Maori',
-	'MR' => 'Marathi',
-	'MN' => 'Mongolian',
-	'NO' => 'Norwegian',
-	'OC' => 'Occitan',
-	'PS' => 'Pashto',
-	'GN' => 'Plautdietsch',
-	'PL' => 'Polish',
-	'BR' => 'Portuguese',
-	'PA' => 'Punjabi',
-	'RO' => 'Romanian',
-	'RU' => 'Russian',
-	'SR' => 'Serbian',
-	'SK' => 'Slovak',
-	'SL' => 'Slovenian',
-	'SP' => 'Spanish',
-	'SI' => 'Swahili',
-	'SW' => 'Swedish',
-	'CH' => 'Swiss',
-	'TL' => 'Tagalog',
-	'TT' => 'Tatarish',
-	'TH' => 'Thai',
-	'TR' => 'Turkish',
-	'TK' => 'Turkmen',
-	'UA' => 'Ukrainian',
-	'UZ' => 'Uzbek',
-	'VU' => 'Vietnamese',
-	'CY' => 'Welsh',
-	'SN' => 'Wolof',
-	'JI' => 'Yiddish - transliterated',
-	'YI' => 'Yiddish - unicode',
-    );
-  my $wulang = $cgi->popup_menu(
-        -name    => 'wulang',
-        -id      => 'wulang',
-        -values  => \@values,
-	-labels  => \%labels,
-	-default => $cfg->param('WUNDERGROUND.LANG'),
-    );
-  $template->param( WULANG => $wulang );
-
-
-# Menu: Miniserver
-} elsif ($R::form eq "2") {
-  $navbar{2}{active} = 1;
-  $template->param( "FORM2", 1);
-  $template->param( "WEBSITE", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/weatherdata.html");
-
+  # If a HTML::Template object is used, send the html to the template
+  # $maintemplate->param('MSHTML', $mshtml);
   # SendUDP
   @values = ('0', '1' );
   %labels = (
@@ -604,116 +275,123 @@ if ($R::form eq "1" || !$R::form) {
         -id      => 'sendudp',
         -values  => \@values,
 	-labels  => \%labels,
-	-default => $cfg->param('SERVER.SENDUDP'),
+	-default => $cfg->param('MAIN.SENDUDP'),
     );
   $template->param( SENDUDP => $sendudp );
 
-  # DFC
-  my $dfc;
-  my $n;
-  my $checked;
-  my @fields = split(/;/,$cfg->param('SERVER.SENDDFC'));
-  for (my $i=1;$i<=8;$i++) {
-    $checked = 0;
-    foreach ( split( /;/,$cfg->param('SERVER.SENDDFC') ) ) {
-      if ($_ eq $i) {
-        $checked = 1;
-      }
-    }
-    $n = $i-1;
-    $dfc .= $cgi->checkbox(
-        -name    => "dfc$i",
-        -id      => "dfc$i",
-	-checked => $checked,
-        -value   => '1',
-	-label   => "+$n $L{'SETTINGS.LABEL_DAYS'}",
-      );
-  }
-  $template->param( DFC => $dfc );
+  # Send HTML
+  $template->param( "WEBSITE", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/robotsdata.txt");
 
-  # HFC
-  my $hfc;
-  @fields = split(/;/,$cfg->param('SERVER.SENDHFC'));
-  for ($i=1;$i<=48;$i++) {
-    $checked = 0;
-    foreach ( split( /;/,$cfg->param('SERVER.SENDHFC') ) ) {
-      if ($_ eq $i) {
-        $checked = 1;
-      }
-    }
-    $hfc .= $cgi->checkbox(
-        -name    => "hfc$i",
-        -id      => "hfc$i",
-	-checked => $checked,
-        -value   => '1',
-	-label   => "+$i $L{'SETTINGS.LABEL_HOURS'}",
-      );
+  # Robots
+  $template->param( "SENDCMD", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/sendcmd.cgi");
+
+  my $form;
+  for (my $i=1;$i<=5;$i++) {
+	@values = ('0', '1' );
+	%labels = (
+		'0' => $L{'SETTINGS.LABEL_OFF'},
+		'1' => $L{'SETTINGS.LABEL_ON'},
+	);
+	$form = $cgi->popup_menu(
+		-name => "r" . $i . "active",
+		-id => "r" . $i . "active",
+		-values	=> \@values,
+		-labels	=> \%labels,
+		-default => $cfg->param( "ROBOT$i" . ".ACTIVE"),
+	);
+	if ( $cfg->param( "ROBOT$i" . ".ACTIVE") ) {
+			$template->param( "R$i" . "COLLAPSED" => "data-collapsed='false'" );
+	}
+	$template->param( "R$i" . "ACTIVE" => $form );
+
   }
-  $template->param( HFC => $hfc );
+
+#
+# Menu: Robot Commands
+#
+
+} elsif ($R::form eq "2") {
+  $navbar{2}{active} = 1;
+  $template->param( "FORM2", 1);
+  $template->param( "SENDCMD", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/sendcmd.cgi");
+  $template->param( "DOCKRELEASETIME1", $cfg->param('ROBOT1.DOCKRELEASETIME')*1000);
+  $template->param( "DOCKRELEASETIME2", $cfg->param('ROBOT2.DOCKRELEASETIME')*1000);
+  $template->param( "DOCKRELEASETIME3", $cfg->param('ROBOT3.DOCKRELEASETIME')*1000);
+  $template->param( "DOCKRELEASETIME4", $cfg->param('ROBOT4.DOCKRELEASETIME')*1000);
+  $template->param( "DOCKRELEASETIME5", $cfg->param('ROBOT5.DOCKRELEASETIME')*1000);
 
 # Menu: Cloudweather / Website
 } elsif ($R::form eq "3") {
   $navbar{3}{active} = 1;
   $template->param( "FORM3", 1);
-  $template->param( "WEBSITE", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/webpage.html");
-  
-  # Check for installed DNSMASQ-Plugin
-  my $checkdnsmasq = `cat $lbhomedir/data/system/plugindatabase.dat | grep -c -i DNSmasq`;
-  if ($checkdnsmasq > 0) {
-    $template->param( EMUWARNING => $L{'SETTINGS.ERR_DNSMASQ_PLUGIN'} );
-  }
 
-  # Cloudweather Emu
-  @values = ('0', '1' );
+  # Select Soundpacks
+  @values = ('ca_gtts_male',
+	  'ca_aws_female',
+	  'ca_gtts_male',
+	  'de_aws_female1',
+	  'de_aws_female2',
+	  'de_aws_male',
+	  'de_gtts_female',
+	  'en_aws_female',
+	  'en_aws_male',
+	  'en_gtts_female',
+	  'es_aws_female',
+	  'es_aws_male',
+	  'es_gtts_female',
+	  'fi_gtts_female',
+	  'fr_aws_female',
+	  'fr_aws_male',
+	  'fr_gtts_female',
+	  'pl_aws_female',
+	  'pl_aws_male',
+	  'pl_gtts_male',
+	);
   %labels = (
-        '0' => $L{'SETTINGS.LABEL_OFF'},
-        '1' => $L{'SETTINGS.LABEL_ON'},
+	  'ca_aws_female' => 'CA: Amazon Polly Female ',
+	  'ca_gtts_male' => 'CA: Google TTS Male',
+	  'de_aws_female1' => 'DE: Amazon Polly Female 1',
+	  'de_aws_female2' => 'DE: Amazon Polly Female 2',
+	  'de_aws_male' => 'DE: Amazon Polly Male',
+	  'de_gtts_female' => 'DE: Google TTS Female',
+	  'en_aws_female' => 'EN: Amazon Polly Female',
+	  'en_aws_male' => 'EN: Amazon Polly Male',
+	  'en_gtts_female' => 'EN: Google TTS Female',
+	  'es_aws_female' => 'ES: Amazon Polly Female',
+	  'es_aws_male' => 'ES: Amazon Polly Male',
+	  'es_gtts_female' => 'ES: Google TTS Female',
+	  'fi_gtts_female' => 'FI: Google TTS Female',
+	  'fr_aws_female' => 'FR: Amazon Polly Female',
+	  'fr_aws_male' => 'FR: Amazon Polly Male',
+	  'fr_gtts_female' => 'FR: Google TTS Female',
+	  'pl_aws_female' => 'PL: Amazon Polly Female',
+	  'pl_aws_male' => 'PL: Amazon Polly Male',
+	  'pl_gtts_male' => 'PL: Google TTS Male',
     );
-  my $emu = $cgi->popup_menu(
-        -name    => 'emu',
-        -id      => 'emu',
+  my $soundpack = $cgi->popup_menu(
+        -name    => 'soundpack',
+        -id      => 'soundpack',
         -values  => \@values,
 	-labels  => \%labels,
-	-default => $cfg->param('SERVER.EMU'),
     );
-  $template->param( EMU => $emu );
+  $template->param( SOUNDPACK => $soundpack );
 
-  # Theme
-  @values = ('dark', 'light', 'custom' );
+  # Robots
+  @values = ('1', '2', '3', '4', '5' );
   %labels = (
-        'dark' => "Dark Theme",
-        'light' => "Light Theme",
-        'custom' => "Custom Theme",
+        '1' => $L{'SETTINGS.LABEL_MIROBOT'} . " 1",
+        '2' => $L{'SETTINGS.LABEL_MIROBOT'} . " 2",
+        '3' => $L{'SETTINGS.LABEL_MIROBOT'} . " 3",
+        '4' => $L{'SETTINGS.LABEL_MIROBOT'} . " 4",
+        '5' => $L{'SETTINGS.LABEL_MIROBOT'} . " 5",
     );
-  my $theme = $cgi->popup_menu(
-        -name    => 'theme',
-        -id      => 'theme',
+  my $robots = $cgi->popup_menu(
+        -name    => 'robot',
+        -id      => 'robot',
         -values  => \@values,
 	-labels  => \%labels,
-	-default => $cfg->param('WEB.THEME'),
     );
-  $template->param( THEME => $theme );
-
-  # Icon Set
-  @values = ('color', 'flat', 'dark', 'light', 'green', 'silver', 'realistic', 'custom' );
-  %labels = (
-        'color' => "Color Set",
-        'flat' => "Flat Set",
-        'dark' => "Dark Set",
-        'light' => "Light Set",
-        'green' => "Green Set",
-        'silver' => "Silver Set",
-        'realistic' => "Realistic Set",
-        'custom' => "Custom Set",
-    );
-  my $iconset = $cgi->popup_menu(
-        -name    => 'iconset',
-        -id      => 'iconset',
-        -values  => \@values,
-	-labels  => \%labels,
-	-default => $cfg->param('WEB.ICONSET'),
-    );
-  $template->param( ICONSET => $iconset );
+  $template->param( ROBOTS => $robots );
 
 }
 
@@ -721,89 +399,35 @@ if ($R::form eq "1" || !$R::form) {
 $template->param( "LBPPLUGINDIR", $lbpplugindir);
 
 # Template
-LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "http://www.loxwiki.eu/display/LOXBERRY/Wunderground4Loxone", "help.html");
+LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "https://www.loxwiki.eu/display/LOXBERRY/MiRobot2Lox-NG", "help.html");
 print $template->output();
 LoxBerry::Web::lbfooter();
 
 exit;
 
+
 #####################################################
-# Query Wunderground
+# Install Soundpack
 #####################################################
 
-sub wuquery
+sub installsoundpack1
 {
-
-        # Get data from Wunderground Server (API request) for testing API Key and Station
-        my $query = "$url\/$R::wuapikey\/conditions\/pws:1\/lang:EN\/q\/$querystation\.json";
-
-        my $ua = new LWP::UserAgent;
-        my $res = $ua->get($query);
-        my $json = $res->decoded_content();
-
-        # Check status of request
-        my $urlstatus = $res->status_line;
-        my $urlstatuscode = substr($urlstatus,0,3);
-
-	if ($urlstatuscode ne "200") {
-                $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-                &error;
-	}
-
-        # Decode JSON response from server
-        our $decoded_json = decode_json( $json );
-
-	return();
-
-}
-
-#####################################################
-# Query Dark Sky
-#####################################################
-
-sub darkskyquery
-{
-
-        # Get data from DarkSky Server (API request) for testing API Key
-        my $query = "$url\/forecast\/$R::darkskyapikey\/$querystation";
-        my $ua = new LWP::UserAgent;
-        my $res = $ua->get($query);
-        my $json = $res->decoded_content();
-
-        # Check status of request
-        my $urlstatus = $res->status_line;
-        my $urlstatuscode = substr($urlstatus,0,3);
-
-	if ($urlstatuscode ne "200" && $urlstatuscode ne "403" ) {
-                $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-                &error;
-	}
-
-	if ($urlstatuscode eq "403" ) {
-                $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-                &error;
-	}
-
-        # Decode JSON response from server
-        our $decoded_json = decode_json( $json );
-
-	return();
-
-}
-
-#####################################################
-# Error
-#####################################################
-
-sub error
-{
-	$template->param( "ERROR", 1);
-	$template->param( "ERRORMESSAGE", $error);
-	LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "http://www.loxwiki.eu/display/LOXBERRY/Wunderground4Loxone", "help.html");
+	$template->param( "INSTALLSOUNDPACK1", 1);
+	LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "https://www.loxwiki.eu/display/LOXBERRY/MiRobot2Lox-NG", "help.html");
 	print $template->output();
 	LoxBerry::Web::lbfooter();
 
 	exit;
+}
+
+sub installsoundpack2
+{
+	$template->param( "INSTALLSOUNDPACK2", 1);
+	LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "https://www.loxwiki.eu/display/LOXBERRY/MiRobot2Lox-NG", "help.html");
+	print $template->output();
+	LoxBerry::Web::lbfooter();
+
+	return(); # Do not exit here!
 }
 
 #####################################################
@@ -813,7 +437,7 @@ sub error
 sub save
 {
 	$template->param( "SAVE", 1);
-	LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "http://www.loxwiki.eu/display/LOXBERRY/Wunderground4Loxone", "help.html");
+	LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "https://www.loxwiki.eu/display/LOXBERRY/MiRobot2Lox-NG", "help.html");
 	print $template->output();
 	LoxBerry::Web::lbfooter();
 
