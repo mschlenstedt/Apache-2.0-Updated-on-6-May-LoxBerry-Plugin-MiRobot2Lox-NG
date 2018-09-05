@@ -258,7 +258,7 @@ if ($R::form eq "1" || !$R::form) {
 	  FORMID => 'ms',
 	  SELECTED => $cfg->param('MAIN.MS'),
 	  DATA_MINI => 1,
-	  LABEL => " ",
+	  LABEL => "",
   );
   $template->param('MS', $mshtml);
 
