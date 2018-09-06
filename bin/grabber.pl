@@ -49,23 +49,6 @@ my $udpport     = $cfg->param("MAIN.UDPPORT");
 my $ms          = $cfg->param("MAIN.MS");
 
 # Read language phrases
-######
-###### Workaround
-######
-#use LoxBerry::Web;
-#use CGI;
-#my $cgi = CGI->new;
-# Template
-#my $template = HTML::Template->new(
-#    filename => "$lbptemplatedir/settings.html",
-#    global_vars => 1,
-#    loop_context_vars => 1,
-#    die_on_bad_params => 0,
-#);
-#my %L = LoxBerry::System::readlanguage($template, "language.ini");
-######
-######
-######
 my %L = LoxBerry::System::readlanguage("language.ini");
 
 # Create a logging object
@@ -196,7 +179,13 @@ for (my $i=1; $i<6; $i++) {
 		print F "MiRobot$i: sensor_dirty_time=$djson2->{'sensor_dirty_time'}\n";
 		print F "MiRobot$i: side_brush_work_time=$djson2->{'side_brush_work_time'}\n";
 		print F "MiRobot$i: filter_work_time=$djson2->{'filter_work_time'}\n";
-	close (F)
+	close (F);
+
+	# VTI
+	my %data_to_vti;
+	$data_to_vti{"MiRobot$i state"} = $L{"GRABBER.STATE$djson1->{'state'}"};
+	$data_to_vti{"MiRobot$i error"} = $L{"GRABBER.ERROR$djson1->{'error_code'}"};
+	my $response = LoxBerry::IO::mshttp_send_mem($ms, %data_to_vti);
 
 }
 
