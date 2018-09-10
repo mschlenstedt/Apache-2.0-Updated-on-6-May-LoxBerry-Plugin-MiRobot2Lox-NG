@@ -519,6 +519,8 @@ $( document ).ready(function()
 </script>
 </TMPL_IF>
 
+
+
 <TMPL_IF FORM2>
 <table data-role="table" data-mode="columntoggle" data-filter="true" data-input="#filterTable-input" class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-btn-text="<TMPL_VAR SETTINGS.BUTTON_SHOWCOLS>">
 	<thead>
@@ -994,72 +996,136 @@ $( document ).ready(function()
 	</tr>
 </table>
 </TMPL_IF>
-<TMPL_IF FORM3>
-									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=3">
-										<input type="hidden" name="saveformdata3" value="1">
-											<div class="form-group">
-												<center>
-												<table class="formtable" border="0" width="80%" cellpadding="10">
-													<tr>
-														<td colspan=3>
-														<TMPL_VAR SETTINGS.HINT_SOUNDPACK>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=3>
-														&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="20%">
-															<label id="labelsoundpack"><TMPL_VAR SETTINGS.LABEL_SOUNDPACK></label>
-														</td>
-														<td width="70%">
-															<fieldset>
-															<TMPL_VAR SOUNDPACK>
-															</fieldset>
-														</td>
-														<td width="10%">
-															<div id="custom-border-radius">
-																<a href="#"  onClick="preview();" data-role="button" data-inline="true" data-mini="true"><TMPL_VAR SETTINGS.BUTTON_PLAY></a>
-															</div>
-														</td>
-													</tr>
-													<tr>
-														<td width="20%">
-															<label id="labelrobot"><TMPL_VAR SETTINGS.LABEL_INSTALLTO_ROBOT></label>
-														</td>
-														<td width="70%">
-															<fieldset>
-															<TMPL_VAR ROBOTS>
-															</fieldset>
-														</td>
-														<td>
-														</td>
-												</table>
-												</center>
-											</div>
-									<p>
-										&nbsp;
-									</p>
-									<p>
-										<center>
-											<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_INSTALL_SOUNDPACK></button>
-										</center>
-									</form>
-									</p>
-									<script>
-									// Add some attributes PERL::CGI doesn't provide
-									$('select[name=soundpack]').attr('data-mini','true');
-									$('select[name=robot').attr('data-mini','true');
 
-									// Preview Link for theme and iconset
-									function preview() {
-										var url = '/plugins/mirobot2lox-ng/sounds/sample_' + $('#soundpack').val() + '.wav';
-										window.open(url, 'NewWindow');
-									}
-									</script>
+
+
+<TMPL_IF FORM3>
+<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=3">
+	<input type="hidden" name="saveformdata3" value="1">
+		<div class="form-group">
+			<center>
+			<table class="formtable" border="0" width="80%" cellpadding="10">
+				<tr>
+					<td colspan=3>
+					<TMPL_VAR SETTINGS.HINT_SOUNDPACK>
+					</td>
+				</tr>
+				<tr>
+					<td colspan=3>
+					&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td width="20%">
+						<label id="labelsoundpack"><TMPL_VAR SETTINGS.LABEL_SOUNDPACK></label>
+					</td>
+					<td width="70%">
+						<fieldset>
+						<TMPL_VAR SOUNDPACK>
+						</fieldset>
+					</td>
+					<td width="10%">
+						<div id="custom-border-radius">
+							<a href="#"  onClick="preview();" data-role="button" data-inline="true" data-mini="true"><TMPL_VAR SETTINGS.BUTTON_PLAY></a>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td width="20%">
+						<label id="labelrobot"><TMPL_VAR SETTINGS.LABEL_INSTALLTO_ROBOT></label>
+					</td>
+					<td width="70%">
+						<fieldset>
+						<TMPL_VAR ROBOTS>
+						</fieldset>
+					</td>
+					<td>
+					</td>
+			</table>
+			</center>
+		</div>
+<p>
+	&nbsp;
+</p>
+<p>
+	<center>
+		<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_INSTALL_SOUNDPACK></button>
+	</center>
+</form>
+</p>
+<script>
+// Add some attributes PERL::CGI doesn't provide
+$('select[name=soundpack]').attr('data-mini','true');
+$('select[name=robot').attr('data-mini','true');
+
+// Preview Link for theme and iconset
+function preview() {
+	var url = '/plugins/mirobot2lox-ng/sounds/sample_' + $('#soundpack').val() + '.wav';
+	window.open(url, 'NewWindow');
+}
+</script>
 </TMPL_IF>
+
+
+
+<TMPL_IF FORM4>
+<table data-role="table" id="temp-table" data-mode="reflow" class="ui-responsive table-stroke">
+	<thead>
+		<tr>
+			<th><TMPL_VAR SETTINGS.LABEL_MIROBOT></th>
+			<th><TMPL_VAR SETTINGS.LABEL_ROBOTIP></th>
+			<th><TMPL_VAR SETTINGS.LABEL_INPUTS></th>
+			<th><center><TMPL_VAR SETTINGS.LABEL_UDPINPUTS></center></th>
+			<th><center><TMPL_VAR SETTINGS.LABEL_HTTPINPUTS></center></th>
+			<th><center><TMPL_VAR SETTINGS.LABEL_OUTPUTS></center></th>
+		</tr>
+	</thead>
+	<tbody>
+		<TMPL_LOOP NAME=COUNTS>
+			<tr>
+				<td><TMPL_VAR NAME="NAME"></td>
+				<td><TMPL_VAR NAME="IP"></td>
+				<td><span style="font-family:monospace"><TMPL_VAR NAME="VIU_STATE"></span><br>
+					<span style="font-family:monospace"><TMPL_VAR NAME="VIU_ERROR"></span></td>
+				<td align="center"><center><a download="VUI_<TMPL_VAR NAME="V_NAME">_UDP.xml" title="<TMPL_VAR NAME="NAME">"
+					data-role="button" data-icon="arrow-l" data-iconpos="notext"
+					href="<TMPL_VAR NAME="VIU_UDP_URL">"></a></center></td>
+				<td align="center"><center><a download="VUI_<TMPL_VAR NAME="V_NAME">_HTTP.xml" title="<TMPL_VAR NAME="NAME">"
+					data-role="button" data-icon="arrow-l" data-iconpos="notext"
+					href="<TMPL_VAR NAME="VIU_HTTP_URL">"></a></center></td>
+				<td align="center"><center><a download="VO_<TMPL_VAR NAME="V_NAME">.xml" title="<TMPL_VAR NAME="NAME">"
+					data-role="button" data-icon="arrow-r" data-iconpos="notext"
+					href="<TMPL_VAR NAME="VO_URL">"></a></center></td>
+			</tr>
+		</TMPL_LOOP>
+	</tbody>
+</table>
+
+<br>
+
+<p>
+<center>
+	<TMPL_VAR SETTINGS.HINT_INPUTS>
+	<br><br>
+	<TMPL_VAR SETTINGS.HINT_OUTPUTS>
+	<br><br>
+	<TMPL_VAR SETTINGS.HINT_WIZARD>
+</center>
+</p>
+
+<style>
+th {
+	    border-bottom: 1px solid #d6d6d6;
+}
+
+tr:nth-child(even) {
+	    background: #e9e9e9;
+}
+</style>
+</TMPL_IF>
+
+
+
 <TMPL_IF ERROR>
 <center>
 	<table border=0>
@@ -1081,6 +1147,9 @@ $( document ).ready(function()
 	</table>
 </center>
 </TMPL_IF>
+
+
+
 <TMPL_IF SAVE>
 <center>
 	<table border=0>
@@ -1102,6 +1171,9 @@ $( document ).ready(function()
 	</table>
 </center>
 </TMPL_IF>
+
+
+
 <TMPL_IF INSTALLSOUNDPACK1>
 <center>
 	<table border=0>
@@ -1137,6 +1209,9 @@ $( document ).ready(function()
 	</table>
 </center>
 </TMPL_IF>
+
+
+
 <TMPL_IF INSTALLSOUNDPACK2>
 <center>
 	<table border=0>

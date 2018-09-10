@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VirtualInUdp Title="MiRobot2Lox" Comment="by MiRobot2Lox-NG" Address="" Port="<TMPL_VAR MAIN.UDPPORT>">
+
+<TMPL_LOOP NAME=ROBOTS>
+	<VirtualInUdpCmd Title="Unix Time Stamp" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\inow=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="State Code" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\istate_code=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Error Code" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\ierror_code=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Map Present" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\imap_present=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="In Cleaning" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\iin_cleaning=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Fan Power" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\ifan_power=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Message Sequence" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\imsg_seq=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Message Version" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\imsg_ver=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Battery" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\ibattery=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Clean Time" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\iclean_time=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Clean Area" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\iclean_area=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="DND Status" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\idnd_enabled=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Main Brush Work Time" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\imain_brush_work_time=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Side Brush Work Time" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\iside_brush_work_time=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Filter Work Time" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\ifilter_work_time=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInUdpCmd Title="Sensor Dirty Time" Comment="0" Address="" Check="<TMPL_VAR VIU_NAME>:\isensor_dirty_time=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+</TMPL_LOOP>
+
+</VirtualInUdp>

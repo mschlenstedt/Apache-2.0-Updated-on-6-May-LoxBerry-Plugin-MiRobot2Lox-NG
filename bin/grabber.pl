@@ -150,7 +150,7 @@ for (my $i=1; $i<6; $i++) {
 		$data_to_send{'side_brush_work_time'} = $djson2->{'side_brush_work_time'};
 		$data_to_send{'filter_work_time'} = $djson2->{'filter_work_time'};
 	
-		my $response = LoxBerry::IO::msudp_send($ms, $udpport, "MiRobot$i", %data_to_send);
+		my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
 		if (! $response) {
 			LOGERR "Error sending UDP data from Robot$i to MS$ms";
     		} else {

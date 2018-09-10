@@ -26,7 +26,8 @@ use LWP::UserAgent;
 use JSON qw( decode_json );
 use LoxBerry::System;
 use LoxBerry::Web;
-#use warnings;
+use MIME::Base64;
+use warnings;
 #use strict;
 
 ##########################################################################
@@ -204,9 +205,14 @@ $navbar{2}{URL} = 'index.cgi?form=2';
 $navbar{3}{Name} = "$L{'SETTINGS.LABEL_SOUNDPACKS'}";
 $navbar{3}{URL} = 'index.cgi?form=3';
 
-$navbar{4}{Name} = "$L{'SETTINGS.LABEL_LOG'}";
-$navbar{4}{URL} = "/admin/system/tools/logfile.cgi?logfile=plugins/$lbpplugindir/mirobot2lox.log&header=html&format=template&only=once";
-$navbar{4}{target} = '_blank';
+$navbar{4}{Name} = "$L{'SETTINGS.LABEL_TEMPLATEBUILDER'}";
+$navbar{4}{URL} = 'index.cgi?form=4';
+#$navbar{4}{URL} = "/admin/plugins/$lbpplugindir/templatebuilder.cgi";
+#$navbar{4}{target} = '_blank';
+
+$navbar{5}{Name} = "$L{'SETTINGS.LABEL_LOG'}";
+$navbar{5}{URL} = "/admin/system/tools/logfile.cgi?logfile=plugins/$lbpplugindir/mirobot2lox.log&header=html&format=template&only=once";
+$navbar{5}{target} = '_blank';
 
 #
 # Menu: Settings
@@ -311,6 +317,7 @@ if ($R::form eq "1" || !$R::form) {
 #
 
 } elsif ($R::form eq "2") {
+
   $navbar{2}{active} = 1;
   $template->param( "FORM2", 1);
   $template->param( "SENDCMD", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/sendcmd.cgi");
@@ -320,8 +327,12 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( "DOCKRELEASETIME4", $cfg->param('ROBOT4.DOCKRELEASETIME')*1000);
   $template->param( "DOCKRELEASETIME5", $cfg->param('ROBOT5.DOCKRELEASETIME')*1000);
 
-# Menu: Cloudweather / Website
+#
+# Menu: SoundPacks
+#
+
 } elsif ($R::form eq "3") {
+
   $navbar{3}{active} = 1;
   $template->param( "FORM3", 1);
 
@@ -393,10 +404,79 @@ if ($R::form eq "1" || !$R::form) {
     );
   $template->param( ROBOTS => $robots );
 
+
+#
+# Menu: SoundPacks
+#
+
+} elsif ($R::form eq "4") {
+
+  $navbar{4}{active} = 1;
+  $template->param( "FORM4", 1);
+
+
+  # Create VOs
+  my @robots;
+  for (my $i=1;$i<=5;$i++) {
+	if ( $cfg->param( "ROBOT$i" . ".ACTIVE") ) {
+		my %robot;
+		%robot = (
+      		'NAME' => $L{'SETTINGS.LABEL_MIROBOT'} . " #$i",
+      		'V_NAME' => $L{'SETTINGS.LABEL_MIROBOT'} . "$i",
+      		'IP' => $cfg->param( "ROBOT$i" . ".IP"),
+		'VIU_STATE' => "MiRobot$i state",
+		'VIU_ERROR' => "MiRobot$i error",
+		);
+
+		my $virtualoutput = HTML::Template->new(
+			filename => "$lbptemplatedir/virtualoutput.xml",
+			global_vars => 1,
+			loop_context_vars => 1,
+			die_on_bad_params => 0,
+			associate => $cfg,
+		);
+		$virtualoutput->param("VO_NAME" => $L{'SETTINGS.LABEL_MIROBOT'} . "$i" );
+		$virtualoutput->param("VO_SENDCMD" => "http://$ENV{HTTP_HOST}");
+		$virtualoutput->param("ROBOTNO" => $i );
+		$virtualoutput->param("SENDCMD" => "/plugins/$lbpplugindir/sendcmd.cgi");
+
+		my $voxml = encode_base64($virtualoutput->output);
+		$robot{VO_URL} = "data:application/octet-stream;charset=utf-8;base64,$voxml";
+
+		push(@robots, \%robot);
+	}
+  }
+  $template->param(COUNTS => \@robots);
+
+#my @robots;
+#for (my $i=1;$i<=5;$i++) {
+#
+#	my $virtualinput_http = HTML::Template->new(
+#		filename => "$lbptemplatedir/virtualinput_http.xml",
+#		global_vars => 1,
+#		loop_context_vars => 1,
+#		die_on_bad_params => 0,
+#		associate => $cfg,
+#	);
+#
+#	my $virtualinput_udp = HTML::Template->new(
+#		filename => "$lbptemplatedir/virtualinput_udp.xml",
+#		global_vars => 1,
+#		loop_context_vars => 1,
+#		die_on_bad_params => 0,
+#		associate => $cfg,
+#	);
+#	$virtualinput_udp->param(VIU_NAME =>$L{'SETTINGS.LABEL_MIROBOT'} . "$i" );
+#	$virtualinput_http->param(VIU_NAME =>$L{'SETTINGS.LABEL_MIROBOT'} . "$i" );
+#	$virtualinput_http->param( "VIU_URL", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/robotsdata.txt");
+#
+#	my $viuudpxml = encode_base64($virtualinput_udp->output);
+#	my $viuhttpxml = encode_base64($virtualinput_http->output);
+#	$robot{VIU_UDP_URL} = "data:application/octet-stream;charset=utf-8;base64,$viuudpxml";
+#	$robot{VIU_HTTP_URL} = "data:application/octet-stream;charset=utf-8;base64,$viuhttpxml";
+
 }
 
-# Template Vars and Form parts
-$template->param( "LBPPLUGINDIR", $lbpplugindir);
 
 # Template
 LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "https://www.loxwiki.eu/display/LOXBERRY/MiRobot2Lox-NG", "help.html");
