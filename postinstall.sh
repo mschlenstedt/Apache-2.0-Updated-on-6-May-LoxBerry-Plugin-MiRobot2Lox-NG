@@ -42,6 +42,7 @@ ARGV5=$5 # Fifth argument is Base folder of LoxBerry
 echo "<INFO> Creating symbolic links"
 ln -v -s $LBPLOG/$ARGV2/robotsdata.txt $LBPHTML/$ARGV2/robotsdata.txt
 rm -fr $LBHOMEDIR/.cache/python-miio
+mkdir $LBHOMEDIR/.cache
 ln -v -s $LBPLOG/$ARGV2 $LBHOMEDIR/.cache/python-miio 
 
 # Exit with Status 0
