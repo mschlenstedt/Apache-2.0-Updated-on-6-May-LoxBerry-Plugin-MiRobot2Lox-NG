@@ -6,4 +6,4 @@ touch $LBPLOG/$pluginname/mirobot2lox.log > /dev/null 2>&1
 touch $LBPLOG/$pluginname/robotsdata.txt > /dev/null 2>&1
 
 rm -fr $LBHOMEDIR/.cache/python-miio
-ln -s $LBHOMEDIR/.cache/python-miio $LBPLOG/$pluginname > /dev/null 2>&1
+ln -s $LBPLOG/$pluginname $LBHOMEDIR/.cache/python-miio > /dev/null 2>&1

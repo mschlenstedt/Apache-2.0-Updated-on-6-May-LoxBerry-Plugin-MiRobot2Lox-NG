@@ -406,7 +406,7 @@ if ($R::form eq "1" || !$R::form) {
 
 
 #
-# Menu: SoundPacks
+# Menu: Inputs/Outputs
 #
 
 } elsif ($R::form eq "4") {
@@ -444,13 +444,21 @@ if ($R::form eq "1" || !$R::form) {
 		$robot{VO_URL} = "data:application/octet-stream;charset=utf-8;base64,$voxml";
 
 		push(@robots, \%robot);
+  		$template->param(ROWS => $i);
 	}
   }
   $template->param(COUNTS => \@robots);
 
-#my @robots;
-#for (my $i=1;$i<=5;$i++) {
-#
+  # Create VIUs
+  my @robots;
+  for (my $i=1;$i<=5;$i++) {
+	my %robot;
+	%robot = (
+      	'V_NAME' => $L{'SETTINGS.LABEL_MIROBOT'} . "$i",
+	);
+	push(@robots, \%robot);
+  }
+
 #	my $virtualinput_http = HTML::Template->new(
 #		filename => "$lbptemplatedir/virtualinput_http.xml",
 #		global_vars => 1,
@@ -458,22 +466,18 @@ if ($R::form eq "1" || !$R::form) {
 #		die_on_bad_params => 0,
 #		associate => $cfg,
 #	);
-#
-#	my $virtualinput_udp = HTML::Template->new(
-#		filename => "$lbptemplatedir/virtualinput_udp.xml",
-#		global_vars => 1,
-#		loop_context_vars => 1,
-#		die_on_bad_params => 0,
-#		associate => $cfg,
-#	);
-#	$virtualinput_udp->param(VIU_NAME =>$L{'SETTINGS.LABEL_MIROBOT'} . "$i" );
-#	$virtualinput_http->param(VIU_NAME =>$L{'SETTINGS.LABEL_MIROBOT'} . "$i" );
-#	$virtualinput_http->param( "VIU_URL", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/robotsdata.txt");
-#
-#	my $viuudpxml = encode_base64($virtualinput_udp->output);
-#	my $viuhttpxml = encode_base64($virtualinput_http->output);
-#	$robot{VIU_UDP_URL} = "data:application/octet-stream;charset=utf-8;base64,$viuudpxml";
-#	$robot{VIU_HTTP_URL} = "data:application/octet-stream;charset=utf-8;base64,$viuhttpxml";
+
+  my $virtualinput_udp = HTML::Template->new(
+	filename => "$lbptemplatedir/virtualinput_udp.xml",
+	global_vars => 1,
+	loop_context_vars => 1,
+	die_on_bad_params => 0,
+	associate => $cfg,
+	);
+
+  $virtualinput_udp->param(COUNTS => \@robots);
+  $viuudpxml = encode_base64($virtualinput_udp->output);
+  $template->param(VIU_UDP_URL => "data:application/octet-stream;charset=utf-8;base64,$viuudpxml");
 
 }
 
