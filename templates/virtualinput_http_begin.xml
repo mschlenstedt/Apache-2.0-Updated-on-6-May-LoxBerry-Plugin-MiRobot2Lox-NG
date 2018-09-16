@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<VirtualInHttp Title="<TMPL_VAR VIU_NAME>" Comment="by MiRobot2Lox-NG" Address="<TMPL_VAR VIU_URL>" PollingTime="60">

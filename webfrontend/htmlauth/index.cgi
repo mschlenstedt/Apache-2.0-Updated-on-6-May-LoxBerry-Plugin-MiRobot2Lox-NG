@@ -459,13 +459,18 @@ if ($R::form eq "1" || !$R::form) {
 	push(@robots, \%robot);
   }
 
-#	my $virtualinput_http = HTML::Template->new(
-#		filename => "$lbptemplatedir/virtualinput_http.xml",
-#		global_vars => 1,
-#		loop_context_vars => 1,
-#		die_on_bad_params => 0,
-#		associate => $cfg,
-#	);
+	my $virtualinput_http = HTML::Template->new(
+		filename => "$lbptemplatedir/virtualinput_http.xml",
+		global_vars => 1,
+		loop_context_vars => 1,
+		die_on_bad_params => 0,
+		associate => $cfg,
+	);
+
+  $virtualinput_http->param(COUNTS => \@robots);
+  $virtualinput_http->param(VIU_URL => "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/robotsdata.txt");
+  $viuhttpxml = encode_base64($virtualinput_http->output);
+  $template->param(VIU_HTTP_URL => "data:application/octet-stream;charset=utf-8;base64,$viuhttpxml");
 
   my $virtualinput_udp = HTML::Template->new(
 	filename => "$lbptemplatedir/virtualinput_udp.xml",
@@ -483,7 +488,7 @@ if ($R::form eq "1" || !$R::form) {
 
 
 # Template
-LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "https://www.loxwiki.eu/display/LOXBERRY/MiRobot2Lox-NG", "help.html");
+LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "https://www.loxwiki.eu/display/LOXBERRY/MiRobot2Lox-NG", "");
 print $template->output();
 LoxBerry::Web::lbfooter();
 
