@@ -104,25 +104,25 @@ if ($R::saveformdata1) {
 	if ( $R::getdata ) {
 		if ( $R::cron eq "30" ) {
 			print F "# Every 30 seconds\n";
-			print F "* * * * * loxberry $lbpbindir/grabber.pl\n";
-			print F "* * * * * loxberry ( sleep 30; $lbpbindir/grabber.pl )\n";
+			print F "* * * * * loxberry $lbpbindir/grabber.pl > /dev/null 2>&1\n";
+			print F "* * * * * loxberry ( sleep 30; $lbpbindir/grabber.pl > /dev/null 2>&1 )\n";
 		}
 		if ( $R::cron eq "60" ) {
 			print F "# Every 60 seconds\n";
-			print F "* * * * * loxberry $lbpbindir/grabber.pl\n";
+			print F "* * * * * loxberry $lbpbindir/grabber.pl > /dev/null 2>&1\n";
 		}
 		if ( $R::cron eq "90" ) {
 			print F "# Every 90 seconds\n";
-			print F "*/3 * * * * loxberry $lbpbindir/grabber.pl\n";
-			print F "* * * * * loxberry ( sleep 90; $lbpbindir/grabber.pl )\n";
+			print F "*/3 * * * * loxberry $lbpbindir/grabber.pl > /dev/null 2>&1\n";
+			print F "* * * * * loxberry ( sleep 90; $lbpbindir/grabber.pl > /dev/null 2>&1 )\n";
 		}
 		if ( $R::cron eq "120" ) {
 			print F "# Every 120 seconds\n";
-			print F "*/2 * * * * loxberry $lbpbindir/grabber.pl\n";
+			print F "*/2 * * * * loxberry $lbpbindir/grabber.pl > /dev/null 2>&1\n";
 		}
 		if ( $R::cron eq "180" ) {
 			print F "# Every 180 seconds\n";
-			print F "*/3 * * * * loxberry $lbpbindir/grabber.pl\n";
+			print F "*/3 * * * * loxberry $lbpbindir/grabber.pl > /dev/null 2>&1\n";
 		}
 	} 
 
