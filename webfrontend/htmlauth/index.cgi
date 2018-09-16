@@ -96,8 +96,12 @@ if ($R::saveformdata1) {
 	# Create Cronjob
 	open (F,">/tmp/$lbpplugindir.crontab");
 
+	print F "SHELL=/bin/bash\n";
+	print F "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\n";
+	print F "MAILTO=\"\"\n";
+	print F "# minute hour day_of_month month day_of_week user command\n";
+
 	if ( $R::getdata ) {
-		print F "# minute hour day_of_month month day_of_week user command\n";
 		if ( $R::cron eq "30" ) {
 			print F "# Every 30 seconds\n";
 			print F "* * * * * loxberry $lbpbindir/grabber.pl\n";
@@ -120,9 +124,7 @@ if ($R::saveformdata1) {
 			print F "# Every 180 seconds\n";
 			print F "*/3 * * * * loxberry $lbpbindir/grabber.pl\n";
 		}
-	} else {
-		print F "# minute hour day_of_month month day_of_week user command\n";
-	}
+	} 
 
 	close(F);
 
