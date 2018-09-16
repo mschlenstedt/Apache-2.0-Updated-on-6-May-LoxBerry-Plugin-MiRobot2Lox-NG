@@ -102,7 +102,7 @@ fi
 
 echo "<INFO> Start installing Python GoogleTTS Module..."
 yes | pip3 install gTTS 
-INSTALLED_APPD=$(pip3 list --format=columns | grep "gtts" | grep -v grep | wc -l)
+INSTALLED_APPD=$(pip3 list --format=columns | grep "gTTS" | grep -v grep | wc -l)
 if [ ${INSTALLED_APPD} -ne "0" ]; then
 	echo "<OK> Python GoogleTTS Module installed successfully."
 else
