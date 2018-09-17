@@ -18,5 +18,9 @@
 	<VirtualInHttpCmd Title="<TMPL_VAR V_NAME>: Side Brush Work Time" Comment="" Check="<TMPL_VAR V_NAME>:\iside_brush_work_time=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
 	<VirtualInHttpCmd Title="<TMPL_VAR V_NAME>: Filter Work Time" Comment="" Check="<TMPL_VAR V_NAME>:\ifilter_work_time=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
 	<VirtualInHttpCmd Title="<TMPL_VAR V_NAME>: Sensor Dirty Time" Comment="" Check="<TMPL_VAR V_NAME>:\isensor_dirty_time=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInHttpCmd Title="<TMPL_VAR V_NAME>: Total Clean Time" Comment="" Check="<TMPL_VAR V_NAME>:\itotal_clean_time=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInHttpCmd Title="<TMPL_VAR V_NAME>: Total Clean Area" Comment="" Check="<TMPL_VAR V_NAME>:\itotal_clean_area=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInHttpCmd Title="<TMPL_VAR V_NAME>: Total Cleanups" Comment="" Check="<TMPL_VAR V_NAME>:\itotal_cleanups=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
+	<VirtualInHttpCmd Title="<TMPL_VAR V_NAME>: Minutes since last Cleaning" Comment="" Check="<TMPL_VAR V_NAME>:\iminutes_since_last_clean=\i\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="2147483647"/>
 </TMPL_LOOP>
 </VirtualInHttp>

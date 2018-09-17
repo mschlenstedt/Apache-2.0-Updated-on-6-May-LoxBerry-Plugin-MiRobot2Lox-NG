@@ -35,7 +35,7 @@ use LoxBerry::IO;
 ##########################################################################
 
 # Version of this script
-my $version = "0.0.4";
+my $version = "0.0.5";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -139,9 +139,10 @@ for (my $i=1; $i<6; $i++) {
 	$djson2->{'sensor_dirty_time'} = sprintf("%.3f", $djson2->{'sensor_dirty_time'} / 60 / 60);
 	$djson2->{'side_brush_work_time'} = sprintf("%.3f", $djson2->{'side_brush_work_time'} / 60 / 60);
 	$djson2->{'filter_work_time'} = sprintf("%.3f", $djson2->{'filter_work_time'} / 60 / 60);
-	$djson3->[0] = sprintf("%.3f", $djson3->[0] / 60); # Total Clean time
+	$djson3->[0] = sprintf("%.3f", $djson3->[0] / 60 / 60); # Total Clean time
 	$djson3->[1] = sprintf("%.3f", $djson3->[1] / 1000000); # Total clean area
-	$djson3->[3]->[0] = sprintf("%.3f", $djson3->[3]->[0] / 60); # Minutes since last cleaning
+	my $last = $djson3->[3]->[0] - $t;
+	$last = sprintf("%.3f", $last / 60); # Minutes since last cleaning
 
 	# UDP
 	if ( $cfg->param("MAIN.SENDUDP") ) {
@@ -168,7 +169,7 @@ for (my $i=1; $i<6; $i++) {
 		$data_to_send{'total_clean_time'} = $djson3->[0];
 		$data_to_send{'total_clean_area'} = $djson3->[1];
 		$data_to_send{'total_cleanups'} = $djson3->[2];
-		$data_to_send{'min_since_last_clean'} = $djson3->[3]->[0];
+		$data_to_send{'minutes_since_last_clean'} = $last;
 	
 		my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
 		if (! $response) {
@@ -202,7 +203,7 @@ for (my $i=1; $i<6; $i++) {
 		print F "MiRobot$i: total_clean_time=$djson3->[0]\n";
 		print F "MiRobot$i: total_clean_area=$djson3->[1]\n";
 		print F "MiRobot$i: total_cleanups=$djson3->[2]\n";
-		print F "MiRobot$i: min_since_last_clean=$djson3->[3]->[0]\n";
+		print F "MiRobot$i: minutes_since_last_clean=$last\n";
 	close (F);
 
 	# VTI
