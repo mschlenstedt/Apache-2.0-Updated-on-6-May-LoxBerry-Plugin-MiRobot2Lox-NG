@@ -35,7 +35,7 @@ use LoxBerry::IO;
 ##########################################################################
 
 # Version of this script
-my $version = "0.0.5";
+my $version = "0.5.3";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -141,7 +141,7 @@ for (my $i=1; $i<6; $i++) {
 	$djson2->{'filter_work_time'} = sprintf("%.3f", $djson2->{'filter_work_time'} / 60 / 60);
 	$djson3->[0] = sprintf("%.3f", $djson3->[0] / 60 / 60); # Total Clean time
 	$djson3->[1] = sprintf("%.3f", $djson3->[1] / 1000000); # Total clean area
-	my $last = $djson3->[3]->[0] - $t;
+	my $last = $t - $djson3->[3]->[0];
 	$last = sprintf("%.3f", $last / 60); # Minutes since last cleaning
 
 	# UDP
