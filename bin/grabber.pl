@@ -35,7 +35,7 @@ use LoxBerry::IO;
 ##########################################################################
 
 # Version of this script
-my $version = "0.0.2";
+my $version = "0.0.4";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -123,9 +123,25 @@ for (my $i=1; $i<6; $i++) {
 	$json = `$lbpbindir/mirobo_wrapper.sh $ip $token consumable_status none 2`;
 	my $djson2 = decode_json( $json );
 
+	LOGINF "Fetching Cleaning Data for Robot $i...";
+	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token clean_history none 2";
+	$json = `$lbpbindir/mirobo_wrapper.sh $ip $token clean_history none 2`;
+	my $djson3 = decode_json( $json );
+
 	# Now
 	my $thuman = localtime();
 	my $t = time();
+
+	# Calculations
+	$djson1->{'clean_area'} = sprintf("%.3f", $djson1->{'clean_area'} / 1000000);
+	$djson1->{'clean_time'} = sprintf("%.3f", $djson1->{'clean_time'} / 60);
+	$djson2->{'main_brush_work_time'} = sprintf("%.3f", $djson2->{'main_brush_work_time'} / 60 / 60);
+	$djson2->{'sensor_dirty_time'} = sprintf("%.3f", $djson2->{'sensor_dirty_time'} / 60 / 60);
+	$djson2->{'side_brush_work_time'} = sprintf("%.3f", $djson2->{'side_brush_work_time'} / 60 / 60);
+	$djson2->{'filter_work_time'} = sprintf("%.3f", $djson2->{'filter_work_time'} / 60 / 60);
+	$djson3->[0] = sprintf("%.3f", $djson3->[0] / 60); # Total Clean time
+	$djson3->[1] = sprintf("%.3f", $djson3->[1] / 1000000); # Total clean area
+	$djson3->[3]->[0] = sprintf("%.3f", $djson3->[3]->[0] / 60); # Minutes since last cleaning
 
 	# UDP
 	if ( $cfg->param("MAIN.SENDUDP") ) {
@@ -140,15 +156,19 @@ for (my $i=1; $i<6; $i++) {
 		$data_to_send{'msg_seq'} = $djson1->{'msg_seq'};
 		$data_to_send{'battery'} = $djson1->{'battery'};
 		$data_to_send{'msg_ver'} = $djson1->{'msg_ver'};
-		$data_to_send{'clean_time'} = $djson1->{'clean_time'} / 60;
+		$data_to_send{'clean_time'} = $djson1->{'clean_time'};
 		$data_to_send{'dnd_enabled'} = $djson1->{'dnd_enabled'};
-		$data_to_send{'clean_area'} = $djson1->{'clean_area'} / 1000000;
+		$data_to_send{'clean_area'} = $djson1->{'clean_area'};
 		$data_to_send{'error_code'} = $djson1->{'error_code'};
 		$data_to_send{'error_txt'} = $L{"GRABBER.ERROR$djson1->{'error_code'}"};
-		$data_to_send{'main_brush_work_time'} = $djson2->{'main_brush_work_time'} / 60 / 60;
-		$data_to_send{'sensor_dirty_time'} = $djson2->{'sensor_dirty_time'} / 60 / 60;
-		$data_to_send{'side_brush_work_time'} = $djson2->{'side_brush_work_time'} / 60 / 60;
-		$data_to_send{'filter_work_time'} = $djson2->{'filter_work_time'} / 60 / 60;
+		$data_to_send{'main_brush_work_time'} = $djson2->{'main_brush_work_time'};
+		$data_to_send{'sensor_dirty_time'} = $djson2->{'sensor_dirty_time'};
+		$data_to_send{'side_brush_work_time'} = $djson2->{'side_brush_work_time'};
+		$data_to_send{'filter_work_time'} = $djson2->{'filter_work_time'};
+		$data_to_send{'total_clean_time'} = $djson3->[0];
+		$data_to_send{'total_clean_area'} = $djson3->[1];
+		$data_to_send{'total_cleanups'} = $djson3->[2];
+		$data_to_send{'min_since_last_clean'} = $djson3->[3]->[0];
 	
 		my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
 		if (! $response) {
@@ -179,6 +199,10 @@ for (my $i=1; $i<6; $i++) {
 		print F "MiRobot$i: sensor_dirty_time=$djson2->{'sensor_dirty_time'}\n";
 		print F "MiRobot$i: side_brush_work_time=$djson2->{'side_brush_work_time'}\n";
 		print F "MiRobot$i: filter_work_time=$djson2->{'filter_work_time'}\n";
+		print F "MiRobot$i: total_clean_time=$djson3->[0]\n";
+		print F "MiRobot$i: total_clean_area=$djson3->[1]\n";
+		print F "MiRobot$i: total_cleanups=$djson3->[2]\n";
+		print F "MiRobot$i: min_since_last_clean=$djson3->[3]->[0]\n";
 	close (F);
 
 	# VTI
