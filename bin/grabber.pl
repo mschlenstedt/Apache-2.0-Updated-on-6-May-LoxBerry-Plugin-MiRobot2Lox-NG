@@ -35,7 +35,7 @@ use LoxBerry::IO;
 ##########################################################################
 
 # Version of this script
-my $version = "0.0.1";
+my $version = "0.0.2";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -140,15 +140,15 @@ for (my $i=1; $i<6; $i++) {
 		$data_to_send{'msg_seq'} = $djson1->{'msg_seq'};
 		$data_to_send{'battery'} = $djson1->{'battery'};
 		$data_to_send{'msg_ver'} = $djson1->{'msg_ver'};
-		$data_to_send{'clean_time'} = $djson1->{'clean_time'};
+		$data_to_send{'clean_time'} = $djson1->{'clean_time'} / 60;
 		$data_to_send{'dnd_enabled'} = $djson1->{'dnd_enabled'};
-		$data_to_send{'clean_area'} = $djson1->{'clean_area'};
+		$data_to_send{'clean_area'} = $djson1->{'clean_area'} / 1000000;
 		$data_to_send{'error_code'} = $djson1->{'error_code'};
 		$data_to_send{'error_txt'} = $L{"GRABBER.ERROR$djson1->{'error_code'}"};
-		$data_to_send{'main_brush_work_time'} = $djson2->{'main_brush_work_time'};
-		$data_to_send{'sensor_dirty_time'} = $djson2->{'sensor_dirty_time'};
-		$data_to_send{'side_brush_work_time'} = $djson2->{'side_brush_work_time'};
-		$data_to_send{'filter_work_time'} = $djson2->{'filter_work_time'};
+		$data_to_send{'main_brush_work_time'} = $djson2->{'main_brush_work_time'} / 60 / 60;
+		$data_to_send{'sensor_dirty_time'} = $djson2->{'sensor_dirty_time'} / 60 / 60;
+		$data_to_send{'side_brush_work_time'} = $djson2->{'side_brush_work_time'} / 60 / 60;
+		$data_to_send{'filter_work_time'} = $djson2->{'filter_work_time'} / 60 / 60;
 	
 		my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
 		if (! $response) {
