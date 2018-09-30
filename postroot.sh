@@ -109,4 +109,13 @@ else
 	echo "<WARNING> Python GoogleTTS Module installation failed! We will continue anyway."
 fi 
 
+echo "<INFO> Start installing Python NetIfaces Module..."
+yes | pip3 install netifaces
+INSTALLED_APPD=$(pip3 list --format=columns | grep "netifaces" | grep -v grep | wc -l)
+if [ ${INSTALLED_APPD} -ne "0" ]; then
+	echo "<OK> Python Netifaces Module installed successfully."
+else
+	echo "<WARNING> Python Netifaces Module installation failed! We will continue anyway."
+fi
+
 exit 0
