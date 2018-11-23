@@ -35,7 +35,7 @@ use LoxBerry::IO;
 ##########################################################################
 
 # Version of this script
-my $version = "0.5.3";
+my $version = "0.5.4";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -157,9 +157,9 @@ for (my $i=1; $i<6; $i++) {
 		$data_to_send{'msg_seq'} = $djson1->{'msg_seq'};
 		$data_to_send{'battery'} = $djson1->{'battery'};
 		$data_to_send{'msg_ver'} = $djson1->{'msg_ver'};
-		$data_to_send{'clean_time'} = $djson1->{'clean_time'};
+		$data_to_send{'cur_clean_time'} = $djson1->{'clean_time'};
 		$data_to_send{'dnd_enabled'} = $djson1->{'dnd_enabled'};
-		$data_to_send{'clean_area'} = $djson1->{'clean_area'};
+		$data_to_send{'cur_clean_area'} = $djson1->{'clean_area'};
 		$data_to_send{'error_code'} = $djson1->{'error_code'};
 		$data_to_send{'error_txt'} = $L{"GRABBER.ERROR$djson1->{'error_code'}"};
 		$data_to_send{'main_brush_work_time'} = $djson2->{'main_brush_work_time'};
@@ -191,9 +191,9 @@ for (my $i=1; $i<6; $i++) {
 		print F "MiRobot$i: msg_seq=$djson1->{'msg_seq'}\n";
 		print F "MiRobot$i: battery=$djson1->{'battery'}\n";
 		print F "MiRobot$i: msg_ver=$djson1->{'msg_ver'}\n";
-		print F "MiRobot$i: clean_time=$djson1->{'clean_time'}\n";
+		print F "MiRobot$i: cur_clean_time=$djson1->{'clean_time'}\n";
 		print F "MiRobot$i: dnd_enabled=$djson1->{'dnd_enabled'}\n";
-		print F "MiRobot$i: clean_area=$djson1->{'clean_area'}\n";
+		print F "MiRobot$i: cur_clean_area=$djson1->{'clean_area'}\n";
 		print F "MiRobot$i: error_code=$djson1->{'error_code'}\n";
 		print F "MiRobot$i: error_txt=" . $L{"GRABBER.ERROR$djson1->{'error_code'}"} . "\n";
 		print F "MiRobot$i: main_brush_work_time=$djson2->{'main_brush_work_time'}\n";
