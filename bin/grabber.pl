@@ -35,7 +35,7 @@ use LoxBerry::IO;
 ##########################################################################
 
 # Version of this script
-my $version = "0.5.4";
+my $version = "0.5.4.1";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
