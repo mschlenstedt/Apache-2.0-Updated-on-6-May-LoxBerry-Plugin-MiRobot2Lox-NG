@@ -35,7 +35,7 @@ use LoxBerry::IO;
 ##########################################################################
 
 # Version of this script
-my $version = "0.5.4.1";
+my $version = "0.5.4.2";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -143,10 +143,26 @@ for (my $i=1; $i<6; $i++) {
 	$djson3->[1] = sprintf("%.3f", $djson3->[1] / 1000000); # Total clean area
 	my $last = $t - $djson3->[3]->[0];
 	$last = sprintf("%.3f", $last / 60); # Minutes since last cleaning
+	my $main_brush_work_percent = sprintf("%.0f", 100/300*(300-$djson2->{'main_brush_work_time'}));
+	$main_brush_work_percent = $main_brush_work_percent < 0 ? "0" : $main_brush_work_percent;
+	my $sensor_dirty_percent = sprintf("%.0f", 100/30*(30-$djson2->{'sensor_dirty_time'}));
+	$sensor_dirty_percent = $sensor_dirty_percent < 0 ? "0" : $sensor_dirty_percent;
+	my $side_brush_work_percent = sprintf("%.0f", 100/200*(200-$djson2->{'side_brush_work_time'}));
+	$side_brush_work_percent = $side_brush_work_percent < 0 ? "0" : $side_brush_work_percent;
+	my $filter_work_percent = sprintf("%.0f", 100/150*(150-$djson2->{'filter_work_time'}));
+	$filter_work_percent = $filter_work_percent < 0 ? "0" : $filter_work_percent;
+	my $main_brush_work_left = sprintf("%.0f", 300-$djson2->{'main_brush_work_time'});
+	$main_brush_work_left = $main_brush_work_left < 0 ? "0" : $main_brush_work_left;
+	my $sensor_dirty_left = sprintf("%.0f", 30-$djson2->{'sensor_dirty_time'});
+	$sensor_dirty_left = $sensor_dirty_left < 0 ? "0" : $sensor_dirty_left;
+	my $side_brush_work_left = sprintf("%.0f", 200-$djson2->{'side_brush_work_time'});
+	$side_brush_work_left = $side_brush_work_left < 0 ? "0" : $side_brush_work_left;
+	my $filter_work_left = sprintf("%.0f", 150-$djson2->{'filter_work_time'});
+	$filter_work_left = $filter_work_left < 0 ? "0" : $filter_work_left;
 
 	# UDP
+	my %data_to_send;
 	if ( $cfg->param("MAIN.SENDUDP") ) {
-		my %data_to_send;
 		$data_to_send{'now_human'} = $thuman;
 		$data_to_send{'now'} = $t;
 		$data_to_send{'state_code'} = $djson1->{'state'};
@@ -163,9 +179,17 @@ for (my $i=1; $i<6; $i++) {
 		$data_to_send{'error_code'} = $djson1->{'error_code'};
 		$data_to_send{'error_txt'} = $L{"GRABBER.ERROR$djson1->{'error_code'}"};
 		$data_to_send{'main_brush_work_time'} = $djson2->{'main_brush_work_time'};
+		$data_to_send{'main_brush_work_percent'} = $main_brush_work_percent;
+		$data_to_send{'main_brush_work_left'} = $main_brush_work_left;
 		$data_to_send{'sensor_dirty_time'} = $djson2->{'sensor_dirty_time'};
+		$data_to_send{'sensor_dirty_percent'} = $sensor_dirty_percent;
+		$data_to_send{'sensor_dirty_left'} = $sensor_dirty_left;
 		$data_to_send{'side_brush_work_time'} = $djson2->{'side_brush_work_time'};
+		$data_to_send{'side_brush_work_percent'} = $side_brush_work_percent;
+		$data_to_send{'side_brush_work_left'} = $side_brush_work_left;
 		$data_to_send{'filter_work_time'} = $djson2->{'filter_work_time'};
+		$data_to_send{'filter_work_percent'} = $filter_work_percent;
+		$data_to_send{'filter_work_left'} = $filter_work_left;
 		$data_to_send{'total_clean_time'} = $djson3->[0];
 		$data_to_send{'total_clean_area'} = $djson3->[1];
 		$data_to_send{'total_cleanups'} = $djson3->[2];
@@ -197,9 +221,17 @@ for (my $i=1; $i<6; $i++) {
 		print F "MiRobot$i: error_code=$djson1->{'error_code'}\n";
 		print F "MiRobot$i: error_txt=" . $L{"GRABBER.ERROR$djson1->{'error_code'}"} . "\n";
 		print F "MiRobot$i: main_brush_work_time=$djson2->{'main_brush_work_time'}\n";
+		print F "MiRobot$i: main_brush_work_percent=$main_brush_work_percent\n";
+		print F "MiRobot$i: main_brush_work_left=$main_brush_work_left\n";
 		print F "MiRobot$i: sensor_dirty_time=$djson2->{'sensor_dirty_time'}\n";
+		print F "MiRobot$i: sensor_dirty_percent=$sensor_dirty_percent\n";
+		print F "MiRobot$i: sensor_dirty_left=$sensor_dirty_left\n";
 		print F "MiRobot$i: side_brush_work_time=$djson2->{'side_brush_work_time'}\n";
+		print F "MiRobot$i: side_brush_work_percent=$side_brush_work_percent\n";
+		print F "MiRobot$i: side_brush_work_left=$side_brush_work_left\n";
 		print F "MiRobot$i: filter_work_time=$djson2->{'filter_work_time'}\n";
+		print F "MiRobot$i: filter_work_percent=$filter_work_percent\n";
+		print F "MiRobot$i: filter_work_left=$filter_work_left\n";
 		print F "MiRobot$i: total_clean_time=$djson3->[0]\n";
 		print F "MiRobot$i: total_clean_area=$djson3->[1]\n";
 		print F "MiRobot$i: total_cleanups=$djson3->[2]\n";
