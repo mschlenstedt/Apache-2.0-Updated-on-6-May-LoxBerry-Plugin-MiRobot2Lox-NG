@@ -29,13 +29,14 @@ use JSON qw( decode_json );
 use File::Copy;
 use Getopt::Long;
 use LoxBerry::IO;
+use Encode qw(decode encode);
 
 ##########################################################################
 # Read Settings
 ##########################################################################
 
 # Version of this script
-my $version = "0.5.4.2";
+my $version = "0.5.4.4";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -166,7 +167,7 @@ for (my $i=1; $i<6; $i++) {
 		$data_to_send{'now_human'} = $thuman;
 		$data_to_send{'now'} = $t;
 		$data_to_send{'state_code'} = $djson1->{'state'};
-		$data_to_send{'state_txt'} = $L{"GRABBER.STATE$djson1->{'state'}"};
+		$data_to_send{'state_txt'} = Encode::decode("UTF-8", $L{"GRABBER.STATE$djson1->{'state'}"});
 		$data_to_send{'map_present'} = $djson1->{'map_present'};
 		$data_to_send{'in_cleaning'} = $djson1->{'in_cleaning'};
 		$data_to_send{'fan_power'} = $djson1->{'fan_power'};
@@ -177,7 +178,7 @@ for (my $i=1; $i<6; $i++) {
 		$data_to_send{'dnd_enabled'} = $djson1->{'dnd_enabled'};
 		$data_to_send{'cur_clean_area'} = $djson1->{'clean_area'};
 		$data_to_send{'error_code'} = $djson1->{'error_code'};
-		$data_to_send{'error_txt'} = $L{"GRABBER.ERROR$djson1->{'error_code'}"};
+		$data_to_send{'error_txt'} = Encode::decode("UTF-8", $L{"GRABBER.ERROR$djson1->{'error_code'}"});
 		$data_to_send{'main_brush_work_time'} = $djson2->{'main_brush_work_time'};
 		$data_to_send{'main_brush_work_percent'} = $main_brush_work_percent;
 		$data_to_send{'main_brush_work_left'} = $main_brush_work_left;
@@ -205,10 +206,11 @@ for (my $i=1; $i<6; $i++) {
 
 	# HTML
 	open (F,">>$lbplogdir/robotsdata.txt");
+	#binmode F, ':encoding(UTF-8)';
 		print F "MiRobot$i: now_human=$thuman\n";
 		print F "MiRobot$i: now=$t\n";
 		print F "MiRobot$i: state_code=$djson1->{'state'}\n";
-		print F "MiRobot$i: state_txt=" . $L{"GRABBER.STATE$djson1->{'state'}"} . "\n";
+		print F "MiRobot$i: state_txt=" . Encode::decode("UTF-8", $L{"GRABBER.STATE$djson1->{'state'}"}) . "\n";
 		print F "MiRobot$i: map_present=$djson1->{'map_present'}\n";
 		print F "MiRobot$i: in_cleaning=$djson1->{'in_cleaning'}\n";
 		print F "MiRobot$i: fan_power=$djson1->{'fan_power'}\n";
@@ -219,7 +221,7 @@ for (my $i=1; $i<6; $i++) {
 		print F "MiRobot$i: dnd_enabled=$djson1->{'dnd_enabled'}\n";
 		print F "MiRobot$i: cur_clean_area=$djson1->{'clean_area'}\n";
 		print F "MiRobot$i: error_code=$djson1->{'error_code'}\n";
-		print F "MiRobot$i: error_txt=" . $L{"GRABBER.ERROR$djson1->{'error_code'}"} . "\n";
+		print F "MiRobot$i: error_txt=" . Encode::decode("UTF-8", $L{"GRABBER.ERROR$djson1->{'error_code'}"}) . "\n";
 		print F "MiRobot$i: main_brush_work_time=$djson2->{'main_brush_work_time'}\n";
 		print F "MiRobot$i: main_brush_work_percent=$main_brush_work_percent\n";
 		print F "MiRobot$i: main_brush_work_left=$main_brush_work_left\n";
