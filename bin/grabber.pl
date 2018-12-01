@@ -49,7 +49,7 @@ my %L = LoxBerry::System::readlanguage("language.ini");
 # Create a logging object
 my $log = LoxBerry::Log->new ( 	
 			name => 'grabber',
-			package => 'MiRobo2Lox-NG',
+			package => 'mirobot2lox-ng',
 			logdir => "$lbplogdir",
 );
 
@@ -203,9 +203,7 @@ for (my $i=1; $i<6; $i++) {
 	open (F,">$lbplogdir/robotsdata.txt") or $error = 1;
 	if ($error) {
 		LOGWARN "Cannot open $lbplogdir/robotsdata.txt for writing.";
-	}
-
-	if (!$error) {
+	} else {
 		print F "MiRobot$i: now_human=$thuman\n";
 		print F "MiRobot$i: now=$t\n";
 		print F "MiRobot$i: state_code=$djson1->{'state'}\n";
