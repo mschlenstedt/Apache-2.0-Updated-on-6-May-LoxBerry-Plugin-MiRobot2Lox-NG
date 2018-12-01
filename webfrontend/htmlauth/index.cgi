@@ -213,7 +213,7 @@ $navbar{4}{URL} = 'index.cgi?form=4';
 #$navbar{4}{target} = '_blank';
 
 $navbar{5}{Name} = "$L{'SETTINGS.LABEL_LOG'}";
-$navbar{5}{URL} = "/admin/system/tools/logfile.cgi?logfile=plugins/$lbpplugindir/mirobot2lox.log&header=html&format=template&only=once";
+$navbar{5}{URL} = LoxBerry::Web::loglist_url();
 $navbar{5}{target} = '_blank';
 
 #
