@@ -118,4 +118,7 @@ else
 	echo "<WARNING> Python Netifaces Module installation failed! We will continue anyway."
 fi
 
+echo "<INFO> Chown all files in ~/log to loxberry:loxberry (fix bug in older versions)..."
+chown -R loxberry:loxberry $PLOG/*
+
 exit 0
