@@ -2,8 +2,9 @@
 
 # pluginname=$(basename $0 .sh)
 pluginname=REPLACELBPPLUGINDIR
-touch $LBPLOG/$pluginname/mirobot2lox.log > /dev/null 2>&1
 touch $LBPLOG/$pluginname/robotsdata.txt > /dev/null 2>&1
+chown -R loxberry:loxberry $LBPLOG/$pluginname > /dev/null 2>&1
 
 rm -fr $LBHOMEDIR/.cache/python-miio
 ln -s $LBPLOG/$pluginname $LBHOMEDIR/.cache/python-miio > /dev/null 2>&1
+chown -R loxberry:loxberry $LBHOMEDIR/.cache > /dev/null 2>&1

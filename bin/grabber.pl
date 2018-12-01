@@ -36,13 +36,7 @@ use Encode qw(decode encode);
 ##########################################################################
 
 # Version of this script
-my $version = "0.5.4.4";
-
-#my $cfg             = new Config::Simple("$home/config/system/general.cfg");
-#my $lang            = $cfg->param("BASE.LANG");
-#my $installfolder   = $cfg->param("BASE.INSTALLFOLDER");
-#my $miniservers     = $cfg->param("BASE.MINISERVERS");
-#my $clouddns        = $cfg->param("BASE.CLOUDDNS");
+my $version = "0.5.5.0";
 
 my $cfg         = new Config::Simple("$lbpconfigdir/mirobot2lox.cfg");
 my $getdata     = $cfg->param("MAIN.GETDATA");
@@ -53,9 +47,10 @@ my $ms          = $cfg->param("MAIN.MS");
 my %L = LoxBerry::System::readlanguage("language.ini");
 
 # Create a logging object
-my $log = LoxBerry::Log->new ( 	name => 'MiRobo2Lox-NG',
-			filename => "$lbplogdir/mirobot2lox.log",
-			append => 1,
+my $log = LoxBerry::Log->new ( 	
+			name => 'grabber',
+			package => 'MiRobo2Lox-NG',
+			logdir => "$lbplogdir",
 );
 
 # Commandline options
@@ -71,10 +66,8 @@ if ($verbose) {
 	$log->loglevel(7);
 }
 
-if ($log->loglevel() eq "7") {
-	LOGSTART "MiRobo2Lox-NG GRABBER process started";
-	LOGDEB "This is $0 Version $version";
-}
+LOGSTART "MiRobo2Lox-NG GRABBER process started";
+LOGDEB "This is $0 Version $version";
 
 # Exit if fetching is not active
 if ( !$getdata ) {
@@ -164,6 +157,7 @@ for (my $i=1; $i<6; $i++) {
 	# UDP
 	my %data_to_send;
 	if ( $cfg->param("MAIN.SENDUDP") ) {
+		LOGINF "Sending UDP data from Robot$i to MS$ms";
 		$data_to_send{'now_human'} = $thuman;
 		$data_to_send{'now'} = $t;
 		$data_to_send{'state_code'} = $djson1->{'state'};
@@ -205,8 +199,13 @@ for (my $i=1; $i<6; $i++) {
 	}
 
 	# HTML
-	open (F,">>$lbplogdir/robotsdata.txt");
-	#binmode F, ':encoding(UTF-8)';
+	my $error = 0;
+	open (F,">$lbplogdir/robotsdata.txt") or $error = 1;
+	if ($error) {
+		LOGWARN "Cannot open $lbplogdir/robotsdata.txt for writing.";
+	}
+
+	if (!$error) {
 		print F "MiRobot$i: now_human=$thuman\n";
 		print F "MiRobot$i: now=$t\n";
 		print F "MiRobot$i: state_code=$djson1->{'state'}\n";
@@ -238,7 +237,8 @@ for (my $i=1; $i<6; $i++) {
 		print F "MiRobot$i: total_clean_area=$djson3->[1]\n";
 		print F "MiRobot$i: total_cleanups=$djson3->[2]\n";
 		print F "MiRobot$i: minutes_since_last_clean=$last\n";
-	close (F);
+		close (F);
+	}
 
 	# VTI
 	my %data_to_vti;
@@ -249,15 +249,11 @@ for (my $i=1; $i<6; $i++) {
 }
 
 # End
-&exit;
 exit;
 
 
-# SUB: Exit
-sub exit
+END
 {
-	if ($log->loglevel() eq "7") {
-		LOGEND "Exit. Bye.";
-	}
-	exit;
+	LOGEND;
 }
+
