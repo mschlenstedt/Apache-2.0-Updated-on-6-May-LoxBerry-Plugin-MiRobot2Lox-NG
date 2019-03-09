@@ -1,3 +1,5 @@
+libffi-dev
+libssl-dev
 ccrypt
 liburi-encode-perl
 python3-pip

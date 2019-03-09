@@ -31,7 +31,7 @@ use strict;
 ##########################################################################
 
 # Version of this script
-my $version = "0.0.1";
+my $version = "1.0.2.0";
 
 # Read Form
 my $cgi = CGI->new;
@@ -82,6 +82,15 @@ if ( !$option ) {
 my $ip = $cfg->param("ROBOT" . $robot . ".IP");
 my $token = $cfg->param("ROBOT" . $robot . ".TOKEN");
 
-system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' '$command' '$option' '$debug'");
+# Special command "dockrelease"
+if ($command eq "dockrelease") {
+	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' 'manual_start' '$debug'");
+	print "sleep 4\n";
+	sleep 4;
+	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' 'manual_control_once' '$option' '$debug'");
+# All other commands
+} else {
+	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' '$command' '$option' '$debug'");
+}
 
 exit 0;
