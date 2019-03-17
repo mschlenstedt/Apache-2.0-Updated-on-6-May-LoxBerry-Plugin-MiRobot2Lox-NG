@@ -36,7 +36,7 @@ use Encode qw(decode encode);
 ##########################################################################
 
 # Version of this script
-my $version = "0.5.5.0";
+my $version = "1.0.2.0";
 
 my $cfg         = new Config::Simple("$lbpconfigdir/mirobot2lox.cfg");
 my $getdata     = $cfg->param("MAIN.GETDATA");
@@ -78,9 +78,7 @@ if ( !$getdata ) {
 LOGINF "Fetching Data from Robots";
 
 # Clean HTML
-open (F,">$lbplogdir/robotsdata.txt");
-	print F "";
-close (F);
+unlink ("$lbplogdir/robotsdata.txt.tmp");
 
 for (my $i=1; $i<6; $i++) {
 
@@ -200,7 +198,7 @@ for (my $i=1; $i<6; $i++) {
 
 	# HTML
 	my $error = 0;
-	open (F,">$lbplogdir/robotsdata.txt") or $error = 1;
+	open (F,">>$lbplogdir/robotsdata.txt.tmp") or $error = 1;
 	if ($error) {
 		LOGWARN "Cannot open $lbplogdir/robotsdata.txt for writing.";
 	} else {
@@ -247,6 +245,7 @@ for (my $i=1; $i<6; $i++) {
 }
 
 # End
+system ("mv $lbplogdir/robotsdata.txt.tmp $lbplogdir/robotsdata.txt");
 exit;
 
 
