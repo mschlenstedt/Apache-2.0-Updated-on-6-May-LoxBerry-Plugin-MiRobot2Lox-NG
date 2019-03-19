@@ -36,7 +36,7 @@ use Encode qw(decode encode);
 ##########################################################################
 
 # Version of this script
-my $version = "1.0.2.0";
+my $version = "1.0.4.0";
 
 my $cfg         = new Config::Simple("$lbpconfigdir/mirobot2lox.cfg");
 my $getdata     = $cfg->param("MAIN.GETDATA");
@@ -65,6 +65,10 @@ if ($verbose) {
 	$log->stdout(1);
 	$log->loglevel(7);
 }
+if ($log->loglevel eq "7") {
+	$LoxBerry::IO::DEBUG = 1;
+}
+
 
 LOGSTART "MiRobo2Lox-NG GRABBER process started";
 LOGDEB "This is $0 Version $version";
@@ -188,7 +192,8 @@ for (my $i=1; $i<6; $i++) {
 		$data_to_send{'total_cleanups'} = $djson3->[2];
 		$data_to_send{'minutes_since_last_clean'} = $last;
 	
-		my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
+		#my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
+		my $response = LoxBerry::IO::msudp_send($ms, $udpport, "MiRobot$i", %data_to_send);
 		if (! $response) {
 			LOGERR "Error sending UDP data from Robot$i to MS$ms";
     		} else {
