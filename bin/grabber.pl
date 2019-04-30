@@ -36,7 +36,7 @@ use Encode qw(decode encode);
 ##########################################################################
 
 # Version of this script
-my $version = "1.0.4.0";
+my $version = "1.0.5.0";
 
 my $cfg         = new Config::Simple("$lbpconfigdir/mirobot2lox.cfg");
 my $getdata     = $cfg->param("MAIN.GETDATA");
@@ -97,6 +97,10 @@ for (my $i=1; $i<6; $i++) {
 	LOGINF "Fetching Status Data for Robot $i...";
 	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token status none 2";
 	my $json = `$lbpbindir/mirobo_wrapper.sh $ip $token status none 2`;
+	if ($json =~ /Unable to discover/) {
+		LOGERR "Robot $i isn't reachable - kipping...";
+		next;
+	}
 	my $djson1 = decode_json( $json );
 	
 	# Unknown state
