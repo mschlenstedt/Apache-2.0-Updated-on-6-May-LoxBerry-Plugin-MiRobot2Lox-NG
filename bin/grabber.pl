@@ -98,7 +98,7 @@ for (my $i=1; $i<6; $i++) {
 	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token status none 2";
 	my $json = `$lbpbindir/mirobo_wrapper.sh $ip $token status none 2`;
 	if ($json =~ /Unable to discover/) {
-		LOGERR "Robot $i isn't reachable - kipping...";
+		LOGERR "Robot $i isn't reachable - skipping...";
 		next;
 	}
 	my $djson1 = decode_json( $json );
@@ -196,8 +196,8 @@ for (my $i=1; $i<6; $i++) {
 		$data_to_send{'total_cleanups'} = $djson3->[2];
 		$data_to_send{'minutes_since_last_clean'} = $last;
 	
-		#my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
-		my $response = LoxBerry::IO::msudp_send($ms, $udpport, "MiRobot$i", %data_to_send);
+		my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
+		#my $response = LoxBerry::IO::msudp_send($ms, $udpport, "MiRobot$i", %data_to_send);
 		if (! $response) {
 			LOGERR "Error sending UDP data from Robot$i to MS$ms";
     		} else {
