@@ -180,11 +180,11 @@ if ($R::saveformdata4) {
 		open STDOUT, ">$logfile";
 		open STDERR, ">/dev/null";
 
-		print "Command: mirobo --ip $ip --token $token install_sound $urlpkg $md5sum\n";
+		print "Command: mirobo --ip $ip --token $token install-sound $urlpkg $md5sum\n";
 		print "Please be patient - may take some seconds... Wait until you see 'Installation of sid xxxx is complete!'.\n\n";
 
 		# Do the installation
-		system ("export LC_ALL=C.UTF-8; export LANG=C.UTF-8; mirobo --ip $ip --token $token install_sound $urlpkg $md5sum 2>&1");
+		system ("export LC_ALL=C.UTF-8; export LANG=C.UTF-8; mirobo --ip $ip --token $token install-sound $urlpkg $md5sum 2>&1");
 
 
 	} # End Child process
