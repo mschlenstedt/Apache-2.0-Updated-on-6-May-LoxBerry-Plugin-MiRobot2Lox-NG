@@ -13,9 +13,15 @@ else
 	OPTION="$4"
 fi
 
+if [[ $6 == "" ]]; then
+	DEVICE="vacuum"
+else
+	OPTION="$6"
+fi
+
 # 2 = Quit
 if [[ $5 != "2" ]]; then
-	echo -e "$MIIOCLI $DEBUG -o json_pretty vacuum --ip $1 --token $2 $3 $OPTION 2>&1\n"
+	echo -e "$MIIOCLI $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1\n"
 	echo -e "Output:\n"
 fi
 
