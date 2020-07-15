@@ -4,7 +4,7 @@ export LANG=C.UTF-8
 MIIOCLI=$(which miiocli)
 
 # 1 = Debug 2 = Quit
-if [[ $5 == "1" ]]; then
+if [[ $6 == "1" ]]; then
 	DEBUG="-d"
 fi
 if [[ $4 == "none" ]]; then
@@ -13,10 +13,10 @@ else
 	OPTION="$4"
 fi
 
-if [[ $6 == "" ]]; then
+if [[ $5 == "" ]]; then
 	DEVICE="vacuum"
 else
-	OPTION="$6"
+	OPTION="$5"
 fi
 
 # 2 = Quit
