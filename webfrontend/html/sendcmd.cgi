@@ -51,6 +51,7 @@ my $command = uri_decode($R::command);
 my $robot = uri_decode($R::robot);
 my $option = uri_decode($R::option);
 my $debug = uri_decode($R::debug);
+my $device = uri_decode($R::device);
 
 # Checks
 if ( !$command ) {
@@ -79,18 +80,22 @@ if ( !$option ) {
 	$option = "none";
 }
 
+if ( !$device ) {
+	$device = "vacuum";
+}
+
 my $ip = $cfg->param("ROBOT" . $robot . ".IP");
 my $token = $cfg->param("ROBOT" . $robot . ".TOKEN");
 
 # Special command "dockrelease"
 if ($command eq "dockrelease") {
-	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' 'manual_start' '$debug'");
+	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' 'manual_start' '$device' '$debug'");
 	print "sleep 4\n";
 	sleep 4;
-	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' 'manual_control_once' '$option' '$debug'");
+	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' 'manual_control_once' '$option' '$device' '$debug'");
 # All other commands
 } else {
-	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' '$command' '$option' '$debug'");
+	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' '$command' '$option' '$device' '$debug'");
 }
 
 exit 0;
