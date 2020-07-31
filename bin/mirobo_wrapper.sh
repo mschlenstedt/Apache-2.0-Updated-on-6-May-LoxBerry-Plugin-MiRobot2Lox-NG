@@ -21,7 +21,7 @@ fi
 
 #$5 kann nicht leer sein, wird von sendcmd gefuellt
 DEVICE=$5
-#§3 command
+#$3 command
 COMMAND=$3
 # 2 = Quit
 #if [[ $5 != "2" ]]; then
@@ -43,13 +43,15 @@ if [[ $6 != "2" ]]; then
         fi
 fi
 
-if ($COMMAND eq "dockrelease") {
+if [[ $COMMAND == "dockrelease" ]]; then
         if [[ $DEVICE == "vacuum" ]]; then
-echo -e         /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 manual_start2>&1
+                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 manual_start2>&1
                 sleep 4
-echo -e         /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 manual_control_once $OPTION 2>&1
+                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 manual_control_once $OPTION 2>&1
         elif [[ $DEVICE == "viomivacuum" ]]; then
-echo -e         /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 move forward $OPTION
+                #/usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 move forward $OPTION
+                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 move forward --duration 15 2>&1
+        fi
 else
         if [[ $DEVICE == "vacuum" ]]; then
                 /usr/local/bin/miiocli $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1

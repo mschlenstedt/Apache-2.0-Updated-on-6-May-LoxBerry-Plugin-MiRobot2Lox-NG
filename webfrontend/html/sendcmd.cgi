@@ -96,14 +96,15 @@ my $ip = $cfg->param("ROBOT" . $robot . ".IP");
 my $token = $cfg->param("ROBOT" . $robot . ".TOKEN");
 
 # Special command "dockrelease"
-if ($command eq "dockrelease") {
-	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' 'manual_start' '$device' '$debug'");
-	print "sleep 4\n";
-	sleep 4;
-	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' 'manual_control_once' '$option' '$device' '$debug'");
+#FS dockrelease Funktion nach wrapper skript verschoben
+#if ($command eq "dockrelease") {
+#	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' 'manual_start' '$device' '$debug'");
+#	print "sleep 4\n";
+#	sleep 4;
+#	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' 'manual_control_once' '$option' '$device' '$debug'");
 # All other commands
-} else {
-	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' '$command' '$option' '$device' '$debug'");
-}
+#} else {
+#	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' '$command' '$option' '$device' '$debug'");
+#}
 
 exit 0;
