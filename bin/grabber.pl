@@ -85,7 +85,8 @@ LOGINF "Fetching Data from Robots";
 unlink ("$lbplogdir/robotsdata.txt.tmp");
 
 for (my $i=1; $i<6; $i++) {
-
+my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
+if ($device eq "vacuum"){
 	if ( !$cfg->param("ROBOT$i" . ".ACTIVE") ) {
 		LOGINF "Robot $i is not active - skipping...";
 		next;
@@ -95,8 +96,8 @@ for (my $i=1; $i<6; $i++) {
 	my $token = $cfg->param( "ROBOT$i" . ".TOKEN");
 
 	LOGINF "Fetching Status Data for Robot $i...";
-	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token status none 2";
-	my $json = `$lbpbindir/mirobo_wrapper.sh $ip $token status none 2`;
+	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2";
+	my $json = `$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2`;
 	if ($json =~ /Unable to discover/) {
 		LOGERR "Robot $i isn't reachable - skipping...";
 		next;
@@ -119,13 +120,13 @@ for (my $i=1; $i<6; $i++) {
 	}
 
 	LOGINF "Fetching Consumables Data for Robot $i...";
-	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token consumable_status none 2";
-	$json = `$lbpbindir/mirobo_wrapper.sh $ip $token consumable_status none 2`;
+	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token consumable_status none $device 2";
+	$json = `$lbpbindir/mirobo_wrapper.sh $ip $token consumable_status none $device 2`;
 	my $djson2 = decode_json( $json );
 
 	LOGINF "Fetching Cleaning Data for Robot $i...";
-	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token clean_history none 2";
-	$json = `$lbpbindir/mirobo_wrapper.sh $ip $token clean_history none 2`;
+	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token clean_history none $device 2";
+	$json = `$lbpbindir/mirobo_wrapper.sh $ip $token clean_history none $device 2`;
 	my $djson3 = decode_json( $json );
 
 	# Now
@@ -251,7 +252,7 @@ for (my $i=1; $i<6; $i++) {
 	$data_to_vti{"MiRobot$i error"} = $L{"GRABBER.ERROR$djson1->{'error_code'}"};
 	my $response = LoxBerry::IO::mshttp_send_mem($ms, %data_to_vti);
 
-}
+}}
 
 # End
 system ("mv $lbplogdir/robotsdata.txt.tmp $lbplogdir/robotsdata.txt");
@@ -262,4 +263,3 @@ END
 {
 	LOGEND;
 }
-
