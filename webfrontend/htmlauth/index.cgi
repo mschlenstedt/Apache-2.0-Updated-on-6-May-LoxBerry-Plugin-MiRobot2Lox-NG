@@ -323,11 +323,11 @@ if ($R::form eq "1" || !$R::form) {
   $navbar{2}{active} = 1;
   $template->param( "FORM2", 1);
   $template->param( "SENDCMD", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/sendcmd.cgi");
-  $template->param( "DOCKRELEASETIME1", $cfg->param('ROBOT1.DOCKRELEASETIME')*1000);
-  $template->param( "DOCKRELEASETIME2", $cfg->param('ROBOT2.DOCKRELEASETIME')*1000);
-  $template->param( "DOCKRELEASETIME3", $cfg->param('ROBOT3.DOCKRELEASETIME')*1000);
-  $template->param( "DOCKRELEASETIME4", $cfg->param('ROBOT4.DOCKRELEASETIME')*1000);
-  $template->param( "DOCKRELEASETIME5", $cfg->param('ROBOT5.DOCKRELEASETIME')*1000);
+  $template->param( "DOCKRELEASETIME1", $cfg->param('ROBOT1.DOCKRELEASETIME')*1);
+  $template->param( "DOCKRELEASETIME2", $cfg->param('ROBOT2.DOCKRELEASETIME')*1);
+  $template->param( "DOCKRELEASETIME3", $cfg->param('ROBOT3.DOCKRELEASETIME')*1);
+  $template->param( "DOCKRELEASETIME4", $cfg->param('ROBOT4.DOCKRELEASETIME')*1);
+  $template->param( "DOCKRELEASETIME5", $cfg->param('ROBOT5.DOCKRELEASETIME')*1);
 
 #
 # Menu: SoundPacks

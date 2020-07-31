@@ -46,11 +46,14 @@ fi
 if [[ $COMMAND == "dockrelease" ]]; then
         if [[ $DEVICE == "vacuum" ]]; then
                 /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 manual_start2>&1
-                sleep 4
-                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 manual_control_once $OPTION 2>&1
+                sleep 8
+				MULT=1000
+                TIME="$((OPTION * MULT))"
+                OPTIONDR="0 0.27 $TIME"
+                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 manual_control_once $OPTIONDR 2>&1
         elif [[ $DEVICE == "viomivacuum" ]]; then
                 #/usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 move forward $OPTION
-                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 move forward --duration 15 2>&1
+                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 move forward --duration $OPTION 2>&1
         fi
 else
         if [[ $DEVICE == "vacuum" ]]; then
