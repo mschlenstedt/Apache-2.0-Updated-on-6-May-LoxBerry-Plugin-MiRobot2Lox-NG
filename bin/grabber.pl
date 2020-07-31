@@ -100,22 +100,46 @@ my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
 	if ($error) {
 		LOGWARN "Cannot open $lbplogdir/robotsdata.txt for writing.";
 	} else {
-		print F "MiRobot$i: output=$output[0]";
-		print F "MiRobot$i: output=$output[1]";
-		print F "MiRobot$i: output=$output[2]";
-		print F "MiRobot$i: output=$output[3]";
-		print F "MiRobot$i: output=$output[4]";
-		print F "MiRobot$i: output=$output[5]";
-		print F "MiRobot$i: output=$output[6]";
-		print F "MiRobot$i: output=$output[7]";
-		print F "MiRobot$i: output=$output[8]";
-		print F "MiRobot$i: output=$output[9]";
-		print F "MiRobot$i: output=$output[10]";
-		print F "MiRobot$i: output=$output[11]";
-		print F "MiRobot$i: output=$output[12]";
-		print F "MiRobot$i: output=$output[13]";
+		my $number = @output;
+#		print @output;
+#		print $number;
+		my $thuman = localtime();
+		print F "MiRobot$i: now_human=$thuman\n";
+		for (my $j=0; $j<$number; $j++) {
+			#my @output1 = split /:/, @output[0];
+			#print F "MiRobot$i: $output1[0]:$output[1]";
+			#alles in kleinschreibung umwandel
+			my $output1=lc($output[$j]);
+			#print $output1;
+			#beim Doppelpunkt trennen
+			my @output2 = split /: /, $output1;
+			#replace white space with _ beim parameter
+			$output2[0]=~ s/ /_/g;
+			#remove white space left bei der variable, nicht mehr notwendig da split auf ": " losgeht
+			#$output2[1]=~ s/^\s+//; 
+#			print "MiRobot$i: $output2[0]=$output2[1]";
+			print F "MiRobot$i: $output2[0]=$output2[1]";
+		# UDP
+		my %data_to_send;
+		if ( $cfg->param("MAIN.SENDUDP") ) {
+			LOGINF "Sending UDP data from Robot$i to MS$ms";
+			$data_to_send{'now_human'} = $thuman;
+			$data_to_send{'$output2[0]'} = $output2[1];
+	
+			my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
+			#my $response = LoxBerry::IO::msudp_send($ms, $udpport, "MiRobot$i", %data_to_send);
+			if (! $response) {
+				LOGERR "Error sending UDP data from Robot$i to MS$ms";
+    			}
+			else {
+				LOGINF "Sending UDP data from Robot$i to MS$ms successfully.";
+			}
+		}
+	}
 		close (F);
 	}
+	
+
 	}
 	
 	if ($device eq "vacuum"){
