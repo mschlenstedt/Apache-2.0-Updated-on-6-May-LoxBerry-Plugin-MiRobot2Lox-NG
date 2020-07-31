@@ -86,7 +86,39 @@ unlink ("$lbplogdir/robotsdata.txt.tmp");
 
 for (my $i=1; $i<6; $i++) {
 my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
-if ($device eq "vacuum"){
+	if ($device eq "viomivacuum"){
+	my $ip = $cfg->param( "ROBOT$i" . ".IP");
+	my $token = $cfg->param( "ROBOT$i" . ".TOKEN");
+
+	LOGINF "Fetching Status Data for Robot $i...";
+	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2";
+	my @output = `$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2`;
+	#print "$output";
+	# HTML
+	my $error = 0;
+	open (F,">>$lbplogdir/robotsdata.txt.tmp") or $error = 1;
+	if ($error) {
+		LOGWARN "Cannot open $lbplogdir/robotsdata.txt for writing.";
+	} else {
+		print F "MiRobot$i: output=$output[0]";
+		print F "MiRobot$i: output=$output[1]";
+		print F "MiRobot$i: output=$output[2]";
+		print F "MiRobot$i: output=$output[3]";
+		print F "MiRobot$i: output=$output[4]";
+		print F "MiRobot$i: output=$output[5]";
+		print F "MiRobot$i: output=$output[6]";
+		print F "MiRobot$i: output=$output[7]";
+		print F "MiRobot$i: output=$output[8]";
+		print F "MiRobot$i: output=$output[9]";
+		print F "MiRobot$i: output=$output[10]";
+		print F "MiRobot$i: output=$output[11]";
+		print F "MiRobot$i: output=$output[12]";
+		print F "MiRobot$i: output=$output[13]";
+		close (F);
+	}
+	}
+	
+	if ($device eq "vacuum"){
 	if ( !$cfg->param("ROBOT$i" . ".ACTIVE") ) {
 		LOGINF "Robot $i is not active - skipping...";
 		next;
