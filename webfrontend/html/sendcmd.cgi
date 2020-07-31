@@ -51,7 +51,8 @@ my $command = uri_decode($R::command);
 my $robot = uri_decode($R::robot);
 my $option = uri_decode($R::option);
 my $debug = uri_decode($R::debug);
-my $device = uri_decode($R::device);
+my $device;
+$device = uri_decode($R::device) if $R::device;
 
 # Checks
 if ( !$command ) {
@@ -80,8 +81,15 @@ if ( !$option ) {
 	$option = "none";
 }
 
+# Iff not set via CGI use config
 if ( !$device ) {
-	$device = "vacuum";
+	# Config
+	if ( $cfg->param("ROBOT" . $robot . ".DEVICE") ) {
+		$device = $cfg->param("ROBOT" . $robot . ".DEVICE");
+	} else {
+		# Default is vacuum
+		$device = "vacuum";
+	}
 }
 
 my $ip = $cfg->param("ROBOT" . $robot . ".IP");
