@@ -86,6 +86,7 @@ if ($R::saveformdata1) {
 
 	for (my $i=1;$i<=5;$i++) {
 		$cfg->param("ROBOT$i" . ".ACTIVE", ${"R::r$i" . "active"} );
+		$cfg->param("ROBOT$i" . ".DEVICE", ${"R::r$i" . "device"} );
 		$cfg->param("ROBOT$i" . ".IP", ${"R::r$i" . "ip"} );
 		$cfg->param("ROBOT$i" . ".TOKEN", ${"R::r$i" . "token"} );
 		$cfg->param("ROBOT$i" . ".DOCKRELEASETIME", ${"R::r$i" . "dockreleasetime"} );
