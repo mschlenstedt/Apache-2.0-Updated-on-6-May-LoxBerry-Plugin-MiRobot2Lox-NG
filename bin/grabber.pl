@@ -106,36 +106,55 @@ my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
 		my $thuman = localtime();
 		print F "MiRobot$i: now_human=$thuman\n";
 		for (my $j=0; $j<$number; $j++) {
-			#my @output1 = split /:/, @output[0];
-			#print F "MiRobot$i: $output1[0]:$output[1]";
 			#alles in kleinschreibung umwandel
 			my $output1=lc($output[$j]);
-			#print $output1;
 			#beim Doppelpunkt trennen
 			my @output2 = split /: /, $output1;
 			#replace white space with _ beim parameter
 			$output2[0]=~ s/ /_/g;
-			#remove white space left bei der variable, nicht mehr notwendig da split auf ": " losgeht
-			#$output2[1]=~ s/^\s+//; 
-#			print "MiRobot$i: $output2[0]=$output2[1]";
-			print F "MiRobot$i: $output2[0]=$output2[1]";
-		# UDP
-		my %data_to_send;
-		if ( $cfg->param("MAIN.SENDUDP") ) {
-			LOGINF "Sending UDP data from Robot$i to MS$ms";
-			$data_to_send{'now_human'} = $thuman;
-			$data_to_send{'$output2[0]'} = $output2[1];
-	
-			my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
-			#my $response = LoxBerry::IO::msudp_send($ms, $udpport, "MiRobot$i", %data_to_send);
-			if (! $response) {
-				LOGERR "Error sending UDP data from Robot$i to MS$ms";
-    			}
-			else {
-				LOGINF "Sending UDP data from Robot$i to MS$ms successfully.";
+			#entferne Sondrzeichen am Ende des Werts
+			chomp($output2[1]);
+			
+			# UDP nur den Status senden
+			# when das 1 ist dann wird per UDP gesendet
+			my $sendvalue=0;
+			##change state to be comaptible with current state of roborock
+			if ($output2[0] eq "state") {
+				$sendvalue=1;
+			#change state to state name used for roborocks
+				$output2[0]="state_code";
+				if ($output2[1] eq "viomivacuumstate.docked") { $output2[1]=0; }
+				elsif ($output2[1] eq "viomivacuumstate.cleaning") { $output2[1]=1; }
+				elsif ($output2[1] eq "viomivacuumstate.returning") { $output2[1]=1; }##rückkehr zur ladestation
+				elsif ($output2[1] eq "viomivacuumstate.idle") { $output2[1]=0; } ##pause am gerät
+				elsif ($output2[1] eq "viomivacuumstate.idle") { $output2[1]=0; } ##pause per app
+				else { $output2[1]=1; }
 			}
+			#send battery state
+			if ($output2[0] eq "battery") { $sendvalue=1; }
+			##example for editing and sending other states, [0]parameter from miiocli, [1]value from miiocli
+			if ($output2[0] eq "example") {
+				$sendvalue=1;
+				##change here value and paramters if needed
+				##alues needs to be decimal because of UDP used
+				}
+			##example for editing and sending other states
+	
+			my %data_to_send;
+			if ( $cfg->param("MAIN.SENDUDP") && $sendvalue==1) {
+				LOGINF "Sending UDP data from Robot$i to MS$ms";
+				#$data_to_send{'now_human'} = $thuman;
+				$data_to_send{$output2[0]} = $output2[1];
+				my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
+				if (! $response) {
+					LOGERR "Error sending UDP data from Robot$i to MS$ms";
+   					}
+				else {
+					LOGINF "Sending UDP data from Robot$i to MS$ms successfully.";
+				}
+			}
+		print F "MiRobot$i: $output2[0]=$output2[1]\n";
 		}
-	}
 		close (F);
 	}
 	
