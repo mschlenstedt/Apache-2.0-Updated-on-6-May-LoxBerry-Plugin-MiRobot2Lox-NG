@@ -5,25 +5,60 @@ MIIOCLI=$(which miiocli)
 
 # 1 = Debug 2 = Quit
 if [[ $6 == "1" ]]; then
-	DEBUG="-d"
+        DEBUG="-d"
+        echo -e "Dollar1 = $1"
+        echo -e "Dollar2 = $2"
+        echo -e "Dollar3 = $3"
+        echo -e "Dollar4 = $4"
+        echo -e "Dollar5 = $5"
+        echo -e "Dollar6 = $6"
 fi
 if [[ $4 == "none" ]]; then
-	OPTION=""
+        OPTION=""
 else
-	OPTION="$4"
+        OPTION="$4"
 fi
 
-if [[ $5 == "" ]]; then
-	DEVICE="vacuum"
-else
-	OPTION="$5"
-fi
-
+#$5 kann nicht leer sein, wird von sendcmd gefuellt
+DEVICE=$5
+#$3 command
+COMMAND=$3
 # 2 = Quit
-if [[ $5 != "2" ]]; then
-	echo -e "$MIIOCLI $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1\n"
-	echo -e "Output:\n"
-fi
+#if [[ $5 != "2" ]]; then
+#       echo -e "$MIIOCLI $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1\n"
+#       echo -e "Output:\n"
+#fi
 
 #$MIIOCLI $DEBUG -o json_pretty vacuum --ip $1 --token $2 $3 $OPTION > /tmp/test.log 2>&1
-/usr/local/bin/miiocli $DEBUG -o json_pretty vacuum --ip $1 --token $2 $3 $OPTION 2>&1
+#/usr/local/bin/miiocli $DEBUG -o json_pretty vacuum --ip $1 --token $2 $3 $OPTION 2>&1
+
+#FS
+if [[ $6 != "2" ]]; then
+        if [[ $DEVICE == "vacuum" ]]; then
+        echo -e "$MIIOCLI $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1\n"
+        echo -e "Output:\n"
+        elif [[ $DEVICE == "viomivacuum" ]]; then
+        echo -e "$MIIOCLI $DEBUG $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1\n"
+        echo -e "Output:\n"
+        fi
+fi
+
+if [[ $COMMAND == "dockrelease" ]]; then
+        if [[ $DEVICE == "vacuum" ]]; then
+                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 manual_start2>&1
+                sleep 8
+				MULT=1000
+                TIME="$((OPTION * MULT))"
+                OPTIONDR="0 0.27 $TIME"
+                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 manual_control_once $OPTIONDR 2>&1
+        elif [[ $DEVICE == "viomivacuum" ]]; then
+                #/usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 move forward $OPTION
+                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 move forward --duration $OPTION 2>&1
+        fi
+else
+        if [[ $DEVICE == "vacuum" ]]; then
+                /usr/local/bin/miiocli $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1
+        elif [[ $DEVICE == "viomivacuum" ]]; then
+                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1
+        fi
+fi

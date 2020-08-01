@@ -85,7 +85,64 @@ LOGINF "Fetching Data from Robots";
 unlink ("$lbplogdir/robotsdata.txt.tmp");
 
 for (my $i=1; $i<6; $i++) {
+my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
+	if ($device eq "viomivacuum"){
+	my $ip = $cfg->param( "ROBOT$i" . ".IP");
+	my $token = $cfg->param( "ROBOT$i" . ".TOKEN");
 
+	LOGINF "Fetching Status Data for Robot $i...";
+	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2";
+	my @output = `$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2`;
+	#print "$output";
+	# HTML
+	my $error = 0;
+	open (F,">>$lbplogdir/robotsdata.txt.tmp") or $error = 1;
+	if ($error) {
+		LOGWARN "Cannot open $lbplogdir/robotsdata.txt for writing.";
+	} else {
+		my $number = @output;
+#		print @output;
+#		print $number;
+		my $thuman = localtime();
+		print F "MiRobot$i: now_human=$thuman\n";
+		for (my $j=0; $j<$number; $j++) {
+			#my @output1 = split /:/, @output[0];
+			#print F "MiRobot$i: $output1[0]:$output[1]";
+			#alles in kleinschreibung umwandel
+			my $output1=lc($output[$j]);
+			#print $output1;
+			#beim Doppelpunkt trennen
+			my @output2 = split /: /, $output1;
+			#replace white space with _ beim parameter
+			$output2[0]=~ s/ /_/g;
+			#remove white space left bei der variable, nicht mehr notwendig da split auf ": " losgeht
+			#$output2[1]=~ s/^\s+//; 
+#			print "MiRobot$i: $output2[0]=$output2[1]";
+			print F "MiRobot$i: $output2[0]=$output2[1]";
+		# UDP
+		my %data_to_send;
+		if ( $cfg->param("MAIN.SENDUDP") ) {
+			LOGINF "Sending UDP data from Robot$i to MS$ms";
+			$data_to_send{'now_human'} = $thuman;
+			$data_to_send{'$output2[0]'} = $output2[1];
+	
+			my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
+			#my $response = LoxBerry::IO::msudp_send($ms, $udpport, "MiRobot$i", %data_to_send);
+			if (! $response) {
+				LOGERR "Error sending UDP data from Robot$i to MS$ms";
+    			}
+			else {
+				LOGINF "Sending UDP data from Robot$i to MS$ms successfully.";
+			}
+		}
+	}
+		close (F);
+	}
+	
+
+	}
+	
+	if ($device eq "vacuum"){
 	if ( !$cfg->param("ROBOT$i" . ".ACTIVE") ) {
 		LOGINF "Robot $i is not active - skipping...";
 		next;
@@ -95,8 +152,8 @@ for (my $i=1; $i<6; $i++) {
 	my $token = $cfg->param( "ROBOT$i" . ".TOKEN");
 
 	LOGINF "Fetching Status Data for Robot $i...";
-	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token status none 2";
-	my $json = `$lbpbindir/mirobo_wrapper.sh $ip $token status none 2`;
+	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2";
+	my $json = `$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2`;
 	if ($json =~ /Unable to discover/) {
 		LOGERR "Robot $i isn't reachable - skipping...";
 		next;
@@ -119,13 +176,13 @@ for (my $i=1; $i<6; $i++) {
 	}
 
 	LOGINF "Fetching Consumables Data for Robot $i...";
-	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token consumable_status none 2";
-	$json = `$lbpbindir/mirobo_wrapper.sh $ip $token consumable_status none 2`;
+	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token consumable_status none $device 2";
+	$json = `$lbpbindir/mirobo_wrapper.sh $ip $token consumable_status none $device 2`;
 	my $djson2 = decode_json( $json );
 
 	LOGINF "Fetching Cleaning Data for Robot $i...";
-	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token clean_history none 2";
-	$json = `$lbpbindir/mirobo_wrapper.sh $ip $token clean_history none 2`;
+	LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token clean_history none $device 2";
+	$json = `$lbpbindir/mirobo_wrapper.sh $ip $token clean_history none $device 2`;
 	my $djson3 = decode_json( $json );
 
 	# Now
@@ -251,7 +308,7 @@ for (my $i=1; $i<6; $i++) {
 	$data_to_vti{"MiRobot$i error"} = $L{"GRABBER.ERROR$djson1->{'error_code'}"};
 	my $response = LoxBerry::IO::mshttp_send_mem($ms, %data_to_vti);
 
-}
+}}
 
 # End
 system ("mv $lbplogdir/robotsdata.txt.tmp $lbplogdir/robotsdata.txt");
@@ -262,4 +319,3 @@ END
 {
 	LOGEND;
 }
-
