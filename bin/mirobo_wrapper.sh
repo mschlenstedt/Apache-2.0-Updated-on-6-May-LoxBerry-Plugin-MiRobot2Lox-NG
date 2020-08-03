@@ -44,22 +44,22 @@ fi
 
 if [[ $COMMAND == "dockrelease" ]]; then
         if [[ $DEVICE == "vacuum" ]]; then
-                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 manual_start2>&1
+                $MIIOCLI $DEBUG $DEVICE --ip $1 --token $2 manual_start2>&1
                 sleep 8
 		MULT=1000
                 TIME="$((OPTION * MULT))"
                 OPTIONDR="0 0.27 $TIME"
-                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 manual_control_once $OPTIONDR 2>&1
+                $MIIOCLI $DEBUG $DEVICE --ip $1 --token $2 manual_control_once $OPTIONDR 2>&1
         elif [[ $DEVICE == "viomivacuum" ]]; then
                 #duration macht Probleme da es wahrscheinlich lokal berechnet wird und die Ausführung der Befehle manchmal länger dauert
                 #/usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 move forward --duration $OPTION 2>&1
                 # nur move forward, reicht für meinen Anwendungsfall aus
-                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 move forward  2>&1
+                $MIIOCLI $DEBUG $DEVICE --ip $1 --token $2 move forward  2>&1
         fi
 else
         if [[ $DEVICE == "vacuum" ]]; then
-                /usr/local/bin/miiocli $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1
+                $MIIOCLI $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1
         elif [[ $DEVICE == "viomivacuum" ]]; then
-                /usr/local/bin/miiocli $DEBUG $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1
+                $MIIOCLI $DEBUG $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1
         fi
 fi

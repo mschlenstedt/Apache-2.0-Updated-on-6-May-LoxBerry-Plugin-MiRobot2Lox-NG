@@ -106,10 +106,15 @@ my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
 		my $thuman = localtime();
 		print F "MiRobot$i: now_human=$thuman\n";
 		for (my $j=0; $j<$number; $j++) {
+			#reset output variables
+			my $output1="empty";
+			my @output2="empty";
+			my $output3="empty";
+			my $output4="empty";
 			#alles in kleinschreibung umwandel
-			my $output1=lc($output[$j]);
+			$output1=lc($output[$j]);
 			#beim Doppelpunkt trennen
-			my @output2 = split /: /, $output1;
+			@output2 = split /: /, $output1;
 			#replace white space with _ beim parameter
 			$output2[0]=~ s/ /_/g;
 			#entferne Sondrzeichen am Ende des Werts
@@ -120,24 +125,178 @@ my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
 			my $sendvalue=0;
 			##change state to be comaptible with current state of roborock
 			if ($output2[0] eq "state") {
+				#change to 0 if shouldnt send to Lx
 				$sendvalue=1;
-			#change state to state name used for roborocks
+				#change state to state name used for roborocks, changed to numbers used in viomivacuum.py
+				$output3="$output2[0]";
 				$output2[0]="state_code";
-				if ($output2[1] eq "viomivacuumstate.docked") { $output2[1]=0; }
-				elsif ($output2[1] eq "viomivacuumstate.cleaning") { $output2[1]=1; }
-				elsif ($output2[1] eq "viomivacuumstate.returning") { $output2[1]=1; }##rückkehr zur ladestation
-				elsif ($output2[1] eq "viomivacuumstate.idle") { $output2[1]=0; } ##pause am gerät
-				elsif ($output2[1] eq "viomivacuumstate.idle") { $output2[1]=0; } ##pause per app
-				else { $output2[1]=1; }
+				$output4 = $output2[1];
+				if ($output2[1] eq "viomivacuumstate.idlenotdocked") { $output2[1]=0; }
+				elsif ($output2[1] eq "viomivacuumstate.idle") { $output2[1]=1; } ##pause am gerät
+				elsif ($output2[1] eq "viomivacuumstate.idle2") { $output2[1]=2; } ##pause per app
+				elsif ($output2[1] eq "viomivacuumstate.cleaning") { $output2[1]=3; }
+				elsif ($output2[1] eq "viomivacuumstate.returning") { $output2[1]=4; }
+				elsif ($output2[1] eq "viomivacuumstate.docked") { $output2[1]=5; }
+				elsif ($output2[1] eq "viomivacuumstate.mopping") { $output2[1]=6; }
+				else { $output2[1]=-1; }
+			}
+			
+			#handle mode, use variables used in viomivacuum.py
+			if ($output2[0] eq "mode") {
+				#change to 0 if shouldnt send to Lx
+				$sendvalue=1;
+				$output3="$output2[0]";
+				$output2[0]="mode_code";
+				$output4 = $output2[1];
+				if ($output2[1] eq "viomimode.vacuum") { $output2[1]=0; }
+				elsif ($output2[1] eq "viomimode.vacuumandmop") { $output2[1]=1; }
+				elsif ($output2[1] eq "viomivacuumstate.mop") { $output2[1]=2; }
+				else { $output2[1]=-1; }
+			}
+			
+			#handle error codes, use variables used in viomivacuum.py
+			if ($output2[0] eq "error") {
+				#change to 0 if shouldnt send to Lx
+				$sendvalue=1;
+				$output3="$output2[0]";
+				$output2[0]="error_code";
+				$output4 = $output2[1];
+				if ($output2[1] eq "radar timed out") { $output2[1]=500; }
+				elsif ($output2[1] eq "wheels stuck") { $output2[1]=501; }
+				elsif ($output2[1] eq "wheels stuck") { $output2[1]=501; }
+				elsif ($output2[1] eq "low battery") { $output2[1]=502; }
+				elsif ($output2[1] eq "dust bin missing") { $output2[1]=503; }
+				elsif ($output2[1] eq "uneven ground") { $output2[1]=508; }
+				elsif ($output2[1] eq "cliff sensor error") { $output2[1]=509; }
+				elsif ($output2[1] eq "collision sensor error") { $output2[1]=510; }
+				elsif ($output2[1] eq "could not return to dock") { $output2[1]=511; }
+				elsif ($output2[1] eq "could not return to dock") { $output2[1]=512; }
+				elsif ($output2[1] eq "could not navigate") { $output2[1]=513; }
+				elsif ($output2[1] eq "vacuum stuck") { $output2[1]=514; }
+				elsif ($output2[1] eq "charging error") { $output2[1]=515; }
+				elsif ($output2[1] eq "mop temperature error") { $output2[1]=516; }
+				elsif ($output2[1] eq "water tank is not installed") { $output2[1]=521; }
+				elsif ($output2[1] eq "mop is not installed") { $output2[1]=522; }
+				elsif ($output2[1] eq "insufficient water in water tank") { $output2[1]=525; }
+				elsif ($output2[1] eq "remove mop") { $output2[1]=527; }
+				elsif ($output2[1] eq "dust bin missing") { $output2[1]=528; }
+				elsif ($output2[1] eq "mop and water tank missing") { $output2[1]=529; }
+				elsif ($output2[1] eq "mop and water tank missing") { $output2[1]=530; }
+				elsif ($output2[1] eq "water tank is not installed") { $output2[1]=531; }
+				elsif ($output2[1] eq "unsufficient battery, continuing cleaning after recharge") { $output2[1]=5101; }
+				else { $output2[1]=$output2[1]; }
 			}
 			#send battery state
 			if ($output2[0] eq "battery") { $sendvalue=1; }
-			##example for editing and sending other states, [0]parameter from miiocli, [1]value from miiocli
-			if ($output2[0] eq "example") {
+			
+			if ($output2[0] eq "fan_speed") {
+				#change to 0 if shouldnt send to Lx
 				$sendvalue=1;
+				#change state to state name used for roborocks, changed to numbers used in viomivacuum.py
+				$output3="$output2[0]";
+				$output2[0]="fan_code";
+				$output4 = $output2[1];
+				if ($output2[1] eq "viomivacuumspeed.silent") { $output2[1]=0; }
+				elsif ($output2[1] eq "viomivacuumspeed.standard") { $output2[1]=1; }
+				elsif ($output2[1] eq "viomivacuumspeed.medium") { $output2[1]=2; }
+				elsif ($output2[1] eq "viomivacuumspeed.turbo") { $output2[1]=3; }
+				else { $output2[1]=-1; }
+			}
+
+			if ($output2[0] eq "box_type") {
+				#change to 0 if shouldnt send to Lx
+				$sendvalue=1;
+				#change state to state name used for roborocks, changed to numbers used in viomivacuum.py
+				$output3="$output2[0]";
+				$output2[0]="box_code";
+				$output4 = $output2[1];
+				if ($output2[1] eq "viomibintype.vacuum") { $output2[1]=1; }
+				elsif ($output2[1] eq "viomibintype.water") { $output2[1]=2; }
+				elsif ($output2[1] eq "viomibintype.vacuumandwater") { $output2[1]=3; }
+				else { $output2[1]=-1; }
+			}
+
+			if ($output2[0] eq "mop_type") {
+				#change to 0 if shouldnt send to Lx
+				$sendvalue=1;
+				#change state to state name used for roborocks, changed to numbers used in viomivacuum.py
+				$output3="$output2[0]";
+				$output2[0]="mop_type_txt";
+				$output4 = $output2[1];
+				if ($output2[1] =="0") { $output2[1]="S"; }
+				elsif ($output2[1] =="1") { $output2[1]="Y"; }
+				else { $output2[1]=-1; }
+			}
+
+			if ($output2[0] eq "water_grade") {
+				#change to 0 if shouldnt send to Lx
+				$sendvalue=1;
+				#change state to state name used for roborocks, changed to numbers used in viomivacuum.py
+				$output3="$output2[0]";
+				$output2[0]="water_grade_code";
+				$output4 = $output2[1];
+				if ($output2[1] eq "viomiwatergrade.low") { $output2[1]=11; }
+				elsif ($output2[1] eq "viomiwatergrade.medium") { $output2[1]=12; }
+				elsif ($output2[1] eq "viomiwatergrade.high") { $output2[1]=13; }
+				else { $output2[1]=-1; }
+			}
+
+			if ($output2[0] eq "remember_map") {
+				#change to 0 if shouldnt send to Lx
+				$sendvalue=1;
+				#change state to state name used for roborocks, changed to numbers used in viomivacuum.py
+				$output3="$output2[0]";
+				$output2[0]="remember_map_code";
+				$output4 = $output2[1];
+				if ($output2[1] eq "true") { $output2[1]=1; }
+				elsif ($output2[1] eq "false") { $output2[1]=0; }
+				else { $output2[1]=-1; }
+			}
+
+			if ($output2[0] eq "has_map") {
+				#change to 0 if shouldnt send to Lx
+				$sendvalue=1;
+				#change state to state name used for roborocks, changed to numbers used in viomivacuum.py
+				$output3="$output2[0]";
+				$output2[0]="has_map_code";
+				$output4 = $output2[1];
+				if ($output2[1] eq "true") { $output2[1]=1; }
+				elsif ($output2[1] eq "false") { $output2[1]=0; }
+				else { $output2[1]=-1; }
+			}
+
+			if ($output2[0] eq "has_new_map") {
+				#change to 0 if shouldnt send to Lx
+				$sendvalue=1;
+				#change state to state name used for roborocks, changed to numbers used in viomivacuum.py
+				$output3="$output2[0]";
+				$output2[0]="has_new_map_code";
+				$output4 = $output2[1];
+				if ($output2[1] eq "true") { $output2[1]=1; }
+				elsif ($output2[1] eq "false") { $output2[1]=0; }
+				else { $output2[1]=-1; }
+			}
+
+			if ($output2[0] eq "mop_mode") {
+				#change to 0 if shouldnt send to Lx
+				$sendvalue=1;
+				#change state to state name used for roborocks, changed to numbers used in viomivacuum.py
+				$output3="$output2[0]";
+				$output2[0]="mop_mode_code";
+				$output4 = $output2[1];
+				if ($output2[1] eq "viomimode.mop") { $output2[1]=0; }
+				elsif ($output2[1] eq "viomimode.vacuumandmop") { $output2[1]=1; }
+				elsif ($output2[1] eq "viomimode.mop") { $output2[1]=2; }
+				else { $output2[1]=-1; }
+			}
+
+			##example for editing and sending other states, [0]parameter from miiocli, [1]value from miiocli
+			#if ($output2[0] eq "example") {
+				#change to 0 if shouldnt send to Lx
+				#$sendvalue=1;
 				##change here value and paramters if needed
 				##alues needs to be decimal because of UDP used
-				}
+				##use example from above}
 			##example for editing and sending other states
 	
 			my %data_to_send;
@@ -145,6 +304,9 @@ my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
 				LOGINF "Sending UDP data from Robot$i to MS$ms";
 				#$data_to_send{'now_human'} = $thuman;
 				$data_to_send{$output2[0]} = $output2[1];
+				if ($output3 ne "empty") {
+					$data_to_send{$output3} = $output4;
+				}
 				my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
 				if (! $response) {
 					LOGERR "Error sending UDP data from Robot$i to MS$ms";
@@ -154,6 +316,9 @@ my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
 				}
 			}
 		print F "MiRobot$i: $output2[0]=$output2[1]\n";
+		if ($output3 ne "empty") {
+					print F "MiRobot$i: $output3=$output4\n";
+				}
 		}
 		close (F);
 	}
