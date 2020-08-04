@@ -107,4 +107,6 @@ my $token = $cfg->param("ROBOT" . $robot . ".TOKEN");
 #	system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' '$command' '$option' '$device' '$debug'");
 #}
 
+system("$lbpbindir/mirobo_wrapper.sh '$ip' '$token' '$command' '$option' '$device' '$debug'");
+
 exit 0;
