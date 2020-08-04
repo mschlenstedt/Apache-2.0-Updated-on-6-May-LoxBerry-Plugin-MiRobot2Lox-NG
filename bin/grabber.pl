@@ -104,7 +104,9 @@ my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
 #		print @output;
 #		print $number;
 		my $thuman = localtime();
+		my $t = time();
 		print F "MiRobot$i: now_human=$thuman\n";
+		print F "MiRobot$i: now=$t\n";
 		for (my $j=0; $j<$number; $j++) {
 			#reset output variables
 			my $output1="empty";
