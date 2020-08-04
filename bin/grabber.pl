@@ -184,6 +184,8 @@ my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
 				elsif ($output2[1] eq "mop and water tank missing") { $output2[1]=530; }
 				elsif ($output2[1] eq "water tank is not installed") { $output2[1]=531; }
 				elsif ($output2[1] eq "unsufficient battery, continuing cleaning after recharge") { $output2[1]=5101; }
+				elsif ($output2[1] eq "charging") { $output2[1]=2103; } ## vielleicht laden?
+				elsif ($output2[1] eq "fully charged") { $output2[1]=2105;  } ## vielleicht aufgeladen?
 				else { $output2[1]=$output2[1]; }
 			}
 			#send battery state
