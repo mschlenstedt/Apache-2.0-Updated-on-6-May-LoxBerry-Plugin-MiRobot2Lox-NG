@@ -55,6 +55,15 @@ PBIN=$LBPBIN/$PDIR
   
 echo "<INFO> Installation as root user started."
 
+echo "<INFO> Start installing Rust Toolchain..."
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+source $HOME/.cargo/env
+if [ $? -ne "0" ]; then
+	echo "<WARNING> Rust Toolchain installation failed! There might be a problem compiling some Python Modules. We will continue anyway."
+else
+	echo "<OK> Rust Toolchain installed successfully."
+fi 
+
 echo "<INFO> Start installing Python Setuptools..."
 yes | pip3 install -U pip setuptools 
 
