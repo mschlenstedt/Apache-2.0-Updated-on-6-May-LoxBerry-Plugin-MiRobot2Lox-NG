@@ -113,7 +113,11 @@ my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
 			my @output2="empty";
 			my $output3="empty";
 			my $output4="empty";
-			#alles in kleinschreibung umwandel
+			#temp variables, if needed
+                        my $outputtempvar="empty";
+                        my @outputtemparr="empty";
+			
+			#alles in kleinschreibung umwandeln
 			$output1=lc($output[$j]);
 			#beim Doppelpunkt trennen
 			@output2 = split /: /, $output1;
@@ -288,12 +292,25 @@ my $device = $cfg->param( "ROBOT$i" . ".DEVICE");
 				$output3="$output2[0]";
 				$output2[0]="mop_mode_code";
 				$output4 = $output2[1];
-				if ($output2[1] eq "viomimode.mop") { $output2[1]=0; }
+				if ($output2[1] eq "viomimode.vacuum") { $output2[1]=0; }
 				elsif ($output2[1] eq "viomimode.vacuumandmop") { $output2[1]=1; }
 				elsif ($output2[1] eq "viomimode.mop") { $output2[1]=2; }
 				else { $output2[1]=-1; }
 			}
+			
+			 if ($output2[0] eq "clean_area") { $sendvalue=1;}
 
+                        if ($output2[0] eq "clean_time") {
+                                $sendvalue=1;
+                                my @outputtemparr = split /:/, $output2[1];
+                                if ($outputtemparr[1] != "0") {
+                                        #hours to minutes
+                                        $outputtemparr[1] = $outputtemparr[1] * 60;
+                                        #calculate summary minutes for output variable
+                                        $output2[1] = $outputtemparr[1] + $outputtemparr[2];
+                                        }
+                                else {$output2[1] = $outputtemparr[2];}
+                                }
 			##example for editing and sending other states, [0]parameter from miiocli, [1]value from miiocli
 			#if ($output2[0] eq "example") {
 				#change to 0 if shouldnt send to Lx
