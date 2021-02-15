@@ -31,7 +31,7 @@ use strict;
 ##########################################################################
 
 # Version of this script
-my $version = "1.0.2.0";
+my $version = "1.2.0.0";
 
 # Read Form
 my $cgi = CGI->new;

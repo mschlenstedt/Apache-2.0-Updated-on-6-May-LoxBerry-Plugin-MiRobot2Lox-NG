@@ -34,12 +34,12 @@ COMMAND=$3
 #FS
 if [[ $6 != "2" ]]; then
         if [[ $DEVICE == "vacuum" ]]; then
-        echo -e "$MIIOCLI $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1\n"
-        echo -e "Output:\n"
+	        echo -e "$MIIOCLI $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1\n"
+       		echo -e "Output:\n"
         elif [[ $DEVICE == "viomivacuum" ]]; then
-        echo -e "$MIIOCLI $DEBUG $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1\n"
-        echo -e "Output:\n"
-        fi
+	        echo -e "$MIIOCLI $DEBUG $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1\n"
+	        echo -e "Output:\n"
+	fi
 fi
 
 if [[ $COMMAND == "dockrelease" ]]; then

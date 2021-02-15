@@ -312,7 +312,21 @@ if ($R::form eq "1" || !$R::form) {
 			$template->param( "R$i" . "COLLAPSED" => "data-collapsed='false'" );
 	}
 	$template->param( "R$i" . "ACTIVE" => $form );
-
+	
+	# Device Type
+	@values = ('vacuum', 'viomivacuum' );
+	%labels = (
+	        'vacuum' => $L{'SETTINGS.LABEL_DEVICE_GEN12'},
+       		'viomivacuum' => $L{'SETTINGS.LABEL_DEVICE_M1S'},
+	);
+	my $devform = $cgi->popup_menu(
+	        -name    => "r" . $i . "device",
+	        -id      => "r" . $i . "device",
+	        -values  => \@values,
+		-labels  => \%labels,
+		-default => $cfg->param( "ROBOT$i" . ".DEVICE"),
+	);
+	$template->param( "DEVICE$i" => $devform );
   }
 
 #
