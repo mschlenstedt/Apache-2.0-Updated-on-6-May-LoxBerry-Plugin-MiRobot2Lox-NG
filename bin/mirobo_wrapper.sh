@@ -2,7 +2,7 @@
 export LC_ALL=C.UTF-8
 export LANG=C.UTF-8
 MIIOCLI=$(which miiocli)
-PYTHONWARNINGS=ignore
+export PYTHONWARNINGS=ignore
 
 # 1 = Debug 2 = Quit
 if [[ $6 == "1" ]]; then
