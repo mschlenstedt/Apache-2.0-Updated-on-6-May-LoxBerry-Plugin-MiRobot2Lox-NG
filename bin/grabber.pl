@@ -371,8 +371,8 @@ for (my $i=1; $i<6; $i++) {
 		my $djson1 = decode_json( $json );
 	
 		# Unknown state
-		if ( $djson1->{'state'} > 14 ) {
-			$djson1->{'state'} = "16";
+		if ( $djson1->{'state'} > 18 ) {
+			$djson1->{'state'} = "99";
 		}
 	
 		# Unknown error
