@@ -138,6 +138,25 @@ else
 	echo "<WARNING> Python Netifaces Module installation failed! We will continue anyway."
 fi
 
+echo "<INFO> Start installing Python Requests..."
+yes | pip3 install -U requests
+INSTALLED_REQUESTS=$(pip3 list --format=columns | grep "requests" | grep -v grep | wc -l)
+if [ ${INSTALLED_REQUESTS} -ne "0" ]; then
+	echo "<OK> Python Requests installed successfully."
+else
+	echo "<WARNING> Python Requests installation failed! We will continue anyway."
+fi 
+
+echo "<INFO> Start installing Token Extractor..."
+wget -O ${PBIN}/token_extractor.py https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor/raw/master/token_extractor.py
+if [ -e ${PBIN}/token_extractor.py ]; then
+	echo "<OK> Token Extractor installed successfully."
+	chown loxberry:loxberry ${PBIN}/token_extractor.py
+	chmod +x ${PBIN}/token_extractor.py
+else
+	echo "<WARNING> Tokenextractor installation failed! We will continue anyway."
+fi
+
 echo "<INFO> Chown all files in ~/log to loxberry:loxberry (fix bug in older versions)..."
 chown -R loxberry:loxberry $PLOG/*
 
