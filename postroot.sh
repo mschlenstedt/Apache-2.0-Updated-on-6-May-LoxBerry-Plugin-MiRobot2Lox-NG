@@ -76,6 +76,17 @@ else
 	exit 2;
 fi 
 
+echo "<INFO> Start installing Python YAML..."
+yes | pip3 install -U pyyaml
+INSTALLED_YAML=$(pip3 list --format=columns | grep "PyYAML" | grep -v grep | wc -l)
+if [ ${INSTALLED_YAML} -ne "0" ]; then
+	echo "<OK> Python YAML installed successfully."
+else
+	echo "<WARNING> Python YAML installation failed! The plugin will not work without."
+	echo "<WARNING> Giving up."
+	exit 2;
+fi 
+
 echo "<INFO> Start installing Python MIIO tools..."
 yes | pip3 install -U python-miio 
 INSTALLED_MIIO=$(pip3 list --format=columns | grep "python-miio" | grep -v grep | wc -l)
