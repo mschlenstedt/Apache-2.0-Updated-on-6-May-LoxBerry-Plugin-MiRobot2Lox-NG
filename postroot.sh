@@ -64,11 +64,19 @@ else
 	echo "<OK> Rust Toolchain installed successfully."
 fi 
 
-echo "<INFO> Start installing Python Setuptools..."
-yes | pip3 install -U pip setuptools 
+echo "<INFO> Start installing Python Wheel..."
+yes | pip3 install -U pip wheel
+INSTALLED=$(pip3 list --format=columns | grep "wheel" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
+	echo "<OK> Python Setuptools installed successfully."
+else
+	echo "<WARNING> Python Setuptools installation failed! We will continue anyway."
+fi 
 
-INSTALLED_ST=$(pip3 list --format=columns | grep "setuptools" | grep -v grep | wc -l)
-if [ ${INSTALLED_ST} -ne "0" ]; then
+echo "<INFO> Start installing Python Setuptools..."
+yes | pip3 install setuptools 
+INSTALLED=$(pip3 list --format=columns | grep "setuptools" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
 	echo "<OK> Python Setuptools installed successfully."
 else
 	echo "<WARNING> Python Setuptools installation failed! The plugin will not work without."
@@ -78,8 +86,8 @@ fi
 
 echo "<INFO> Start installing Python YAML..."
 yes | pip3 install -U pyyaml
-INSTALLED_YAML=$(pip3 list --format=columns | grep "PyYAML" | grep -v grep | wc -l)
-if [ ${INSTALLED_YAML} -ne "0" ]; then
+INSTALLED=$(pip3 list --format=columns | grep "PyYAML" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
 	echo "<OK> Python YAML installed successfully."
 else
 	echo "<WARNING> Python YAML installation failed! The plugin will not work without."
@@ -87,21 +95,10 @@ else
 	exit 2;
 fi 
 
-echo "<INFO> Start installing Python MIIO tools..."
-yes | pip3 install -U python-miio 
-INSTALLED_MIIO=$(pip3 list --format=columns | grep "python-miio" | grep -v grep | wc -l)
-if [ ${INSTALLED_MIIO} -ne "0" ]; then
-	echo "<OK> Python MIIO tools installed successfully."
-else
-	echo "<WARNING> Python MIIO tools installation failed! The plugin will not work without."
-	echo "<WARNING> Giving up."
-	exit 2;
-fi 
-
 echo "<INFO> Start installing Python Cryptography tools..."
 yes | pip3 install -U cryptography 
-INSTALLED_CRYP=$(pip3 list --format=columns | grep "cryptography" | grep -v grep | wc -l)
-if [ ${INSTALLED_CRYP} -ne "0" ]; then
+INSTALLED=$(pip3 list --format=columns | grep "cryptography" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
 	echo "<OK> Python Cryptography tools installed successfully."
 else
 	echo "<WARNING> Python Cryptography tools installation failed! The plugin will not work without."
@@ -111,8 +108,8 @@ fi
 
 echo "<INFO> Start installing Python Appdirs tools..."
 yes | pip3 install appdirs 
-INSTALLED_APPD=$(pip3 list --format=columns | grep "appdirs" | grep -v grep | wc -l)
-if [ ${INSTALLED_APPD} -ne "0" ]; then
+INSTALLED=$(pip3 list --format=columns | grep "appdirs" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
 	echo "<OK> Python Appdirs tools installed successfully."
 else
 	echo "<WARNING> Python Appdirs tools installation failed! The plugin will not work without."
@@ -122,8 +119,8 @@ fi
 
 echo "<INFO> Start installing Python GoogleTTS Module..."
 yes | pip3 install gTTS 
-INSTALLED_APPD=$(pip3 list --format=columns | grep "gTTS" | grep -v grep | wc -l)
-if [ ${INSTALLED_APPD} -ne "0" ]; then
+INSTALLED=$(pip3 list --format=columns | grep "gTTS" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
 	echo "<OK> Python GoogleTTS Module installed successfully."
 else
 	echo "<WARNING> Python GoogleTTS Module installation failed! We will continue anyway."
@@ -131,21 +128,56 @@ fi
 
 echo "<INFO> Start installing Python NetIfaces Module..."
 yes | pip3 install netifaces
-INSTALLED_APPD=$(pip3 list --format=columns | grep "netifaces" | grep -v grep | wc -l)
-if [ ${INSTALLED_APPD} -ne "0" ]; then
+INSTALLED=$(pip3 list --format=columns | grep "netifaces" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
 	echo "<OK> Python Netifaces Module installed successfully."
 else
-	echo "<WARNING> Python Netifaces Module installation failed! We will continue anyway."
+	echo "<WARNING> Python Netifaces Module installation failed! The plugin will not work without."
+	echo "<WARNING> Giving up."
+	exit 2;
 fi
 
 echo "<INFO> Start installing Python Requests..."
-yes | pip3 install -U requests
-INSTALLED_REQUESTS=$(pip3 list --format=columns | grep "requests" | grep -v grep | wc -l)
-if [ ${INSTALLED_REQUESTS} -ne "0" ]; then
+yes | pip3 install requests
+INSTALLED=$(pip3 list --format=columns | grep "requests" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
 	echo "<OK> Python Requests installed successfully."
 else
 	echo "<WARNING> Python Requests installation failed! We will continue anyway."
 fi 
+
+echo "<INFO> Start installing Python Android Backup..."
+yes | pip3 install android_backup
+INSTALLED=$(pip3 list --format=columns | grep "android-backup" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
+	echo "<OK> Python Android Backup installed successfully."
+else
+	echo "<WARNING> Python Android Backup installation failed! We will continue anyway."
+fi 
+
+echo "<INFO> Start installing Python Construct..."
+yes | pip3 install construct
+INSTALLED=$(pip3 list --format=columns | grep "construct" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
+	echo "<OK> Python Construct installed successfully."
+else
+	echo "<WARNING> Python Construct installation failed! The plugin will not work without."
+	echo "<WARNING> Giving up."
+        exit 2;
+
+fi 
+
+echo "<INFO> Start installing Python MIIO tools..."
+yes | pip3 install -U python-miio 
+INSTALLED=$(pip3 list --format=columns | grep "python-miio" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
+	echo "<OK> Python MIIO tools installed successfully."
+else
+	echo "<WARNING> Python MIIO tools installation failed! The plugin will not work without."
+	echo "<WARNING> Giving up."
+	exit 2;
+fi 
+
 
 echo "<INFO> Start installing Token Extractor..."
 wget -O ${PBIN}/token_extractor.py https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor/raw/master/token_extractor.py
