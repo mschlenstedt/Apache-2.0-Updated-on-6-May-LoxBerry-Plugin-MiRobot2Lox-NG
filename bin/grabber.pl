@@ -360,7 +360,7 @@ for (my $i=1; $i<6; $i++) {
 	#################################
 	# Old robots generation: Modell Gen 1. und Gen. 2 (Roborock) and Roborock S7
 	#################################
-	if ($device eq "vacuum"){
+	if ($device eq "roborockvacuum"){
 
 		LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2";
 		my $json = `$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2`;
