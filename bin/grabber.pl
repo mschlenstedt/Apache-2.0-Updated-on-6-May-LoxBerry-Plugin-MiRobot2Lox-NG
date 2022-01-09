@@ -96,7 +96,8 @@ for (my $i=1; $i<6; $i++) {
 	LOGINF "Fetching Status Data for Robot $i...";
 
 	$device = $cfg->param ("ROBOT$i" . ".DEVICE");
-	if ( $device eq "" ) { $device = "vacuum" }; # Default is old vacuum protocol
+	if ( $device eq "" ) { $device = "roborockvacuum" }; # Default is old vacuum protocol
+	if ( $device eq "vacuum" ) { $device = "roborockvacuum" }; # miio now uses different commandline option
 	LOGINF "Protocol is $device";
 
 	my $ip = $cfg->param( "ROBOT$i" . ".IP");
