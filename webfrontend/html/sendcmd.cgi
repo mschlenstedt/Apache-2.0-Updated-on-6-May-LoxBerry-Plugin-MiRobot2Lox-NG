@@ -31,7 +31,7 @@ use strict;
 ##########################################################################
 
 # Version of this script
-my $version = "1.2.0.0";
+my $version = "1.2.0.1";
 
 # Read Form
 my $cgi = CGI->new;
@@ -86,9 +86,10 @@ if ( !$device ) {
 	# Config
 	if ( $cfg->param("ROBOT" . $robot . ".DEVICE") ) {
 		$device = $cfg->param("ROBOT" . $robot . ".DEVICE");
+		if ( $device eq "vacuum" ) { $device = "roborockvacuum" }; # miio now uses different commandline option
 	} else {
-		# Default is vacuum
-		$device = "vacuum";
+		# Default is roborockvacuum
+		$device = "roborockvacuum";
 	}
 }
 
