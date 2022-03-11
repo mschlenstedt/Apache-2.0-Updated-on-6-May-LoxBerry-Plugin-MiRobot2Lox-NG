@@ -37,7 +37,7 @@ if [[ $6 != "2" ]]; then
         if [[ $DEVICE == "roborockvacuum" ]]; then
 	        echo -e "$MIIOCLI $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1\n"
        		echo -e "Output:\n"
-        elif [[ $DEVICE == "viomivacuum" ] || [ $DEVICE == "dreamevacuum" ]]; then
+        elif [[ $DEVICE == "viomivacuum"  ||  $DEVICE == "dreamevacuum" ]]; then
 	        echo -e "$MIIOCLI $DEBUG $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1\n"
 	        echo -e "Output:\n"
 	fi
@@ -61,7 +61,7 @@ if [[ $COMMAND == "dockrelease" ]]; then
 else
         if [[ $DEVICE == "roborockvacuum" ]]; then
                 $MIIOCLI $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1
-        elif [[ $DEVICE == "viomivacuum" ] || [ $DEVICE == "dreamevaccum" ]]; then
+        elif [[ $DEVICE == "viomivacuum" || $DEVICE == "dreamevaccum" ]]; then
                 $MIIOCLI $DEBUG $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1
         fi
 fi
