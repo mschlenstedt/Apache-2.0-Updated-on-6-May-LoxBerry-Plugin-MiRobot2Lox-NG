@@ -104,6 +104,82 @@ for (my $i=1; $i<6; $i++) {
 	my $token = $cfg->param( "ROBOT$i" . ".TOKEN");
 
 	#################################
+	# New robots generation: Modell Dreame
+	#################################
+	if ($device eq "dreamevaccum"){
+
+		LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2";
+		my @output = `$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2`;
+
+		my $error = 0;
+		open (F,">>$lbplogdir/robotsdata.txt.tmp") or $error = 1;
+		if ($error) {
+			LOGWARN "Cannot open $lbplogdir/robotsdata.txt for writing.";
+		} else {
+			my $number = @output;
+			my $thuman = localtime();
+			my $t = time();
+			print F "MiRobot$i: now_human=$thuman\n";
+			print F "MiRobot$i: now=$t\n";
+			for (my $j=0; $j<$number; $j++) {
+				#reset output variables
+				my $output1="empty";
+				my @output2="empty";
+				my $output3="empty";
+				my $output4="empty";
+				#temp variables, if needed
+       	        	        my $outputtempvar="empty";
+       		                my @outputtemparr="empty";
+			
+				#alles in kleinschreibung umwandeln
+				$output1=lc($output[$j]);
+				#beim Doppelpunkt trennen
+				@output2 = split /: /, $output1;
+				#replace white space with _ beim parameter
+				$output2[0]=~ s/ /_/g;
+				#entferne Sondrzeichen am Ende des Werts
+				chomp($output2[1]);
+			
+				# UDP nur den Status senden
+				# when das 1 ist dann wird per UDP gesendet
+				my $sendvalue=0;
+				##change state to be comaptible with current state of roborock
+				
+				##example for editing and sending other states, [0]parameter from miiocli, [1]value from miiocli
+				#if ($output2[0] eq "example") {
+					#change to 0 if shouldnt send to Lx
+					#$sendvalue=1;
+					##change here value and paramters if needed
+					##alues needs to be decimal because of UDP used
+					##use example from above}
+				##example for editing and sending other states
+	
+				my %data_to_send;
+				if ( $cfg->param("MAIN.SENDUDP") && $sendvalue==1) {
+					LOGINF "Sending UDP data from Robot$i to MS$ms";
+					#$data_to_send{'now_human'} = $thuman;
+					$data_to_send{$output2[0]} = $output2[1];
+					if ($output3 ne "empty") {
+						$data_to_send{$output3} = $output4;
+					}
+					my $response = LoxBerry::IO::msudp_send_mem($ms, $udpport, "MiRobot$i", %data_to_send);
+					if (! $response) {
+						LOGERR "Error sending UDP data from Robot$i to MS$ms";
+   						}
+					else {
+						LOGINF "Sending UDP data from Robot$i to MS$ms successfully.";
+					}
+				}
+				print F "MiRobot$i: $output2[0]=$output2[1]\n";
+				if ($output3 ne "empty") {
+					print F "MiRobot$i: $output3=$output4\n";
+				}
+			}
+			close (F);
+		}
+	}
+
+	#################################
 	# New robots generation: Modell Mi Robot Vaccuum-Mop P (STYTJ02YM)
 	#################################
 	if ($device eq "viomivacuum"){
