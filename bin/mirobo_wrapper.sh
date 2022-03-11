@@ -61,7 +61,7 @@ if [[ $COMMAND == "dockrelease" ]]; then
 else
         if [[ $DEVICE == "roborockvacuum" ]]; then
                 $MIIOCLI $DEBUG -o json_pretty $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1
-        elif [[ $DEVICE == "viomivacuum" || $DEVICE == "dreamevaccum" ]]; then
+        elif [[ $DEVICE == "viomivacuum" || $DEVICE == "dreamevacuum" ]]; then
                 $MIIOCLI $DEBUG $DEVICE --ip $1 --token $2 $3 $OPTION 2>&1
         fi
 fi
