@@ -106,7 +106,7 @@ for (my $i=1; $i<6; $i++) {
 	#################################
 	# New robots generation: Modell Dreame
 	#################################
-	if ($device eq "dreamevaccum"){
+	if ($device eq "dreamevacuum"){
 
 		LOGINF "$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2";
 		my @output = `$lbpbindir/mirobo_wrapper.sh $ip $token status none $device 2`;
@@ -143,8 +143,75 @@ for (my $i=1; $i<6; $i++) {
 				# UDP nur den Status senden
 				# when das 1 ist dann wird per UDP gesendet
 				my $sendvalue=0;
-				##change state to be comaptible with current state of roborock
 				
+				if ($output2[0] eq "battery_level") {
+					#change to 0 if shouldnt send to Lx
+					$sendvalue=1;
+					# change name to battery to match virtual outputs
+					$output2[0]="battery";
+				}
+
+				if ($output2[0] eq "device_status") {
+					#change to 0 if shouldnt send to Lx
+					$sendvalue=1;
+					#change state to state name used for roborocks, changed to numbers used in dreamevacuum_miot
+					$output3="$output2[0]";
+					$output2[0]="state_code";
+					$output4 = $output2[1];
+					if ($output2[1] eq "sweeping") { $output2[1]=1; }
+					elsif ($output2[1] eq "idle") { $output2[1]=2; }
+					elsif ($output2[1] eq "paused") { $output2[1]=3; }
+					elsif ($output2[1] eq "error") { $output2[1]=4; }
+					elsif ($output2[1] eq "gocharging") { $output2[1]=5; }
+					elsif ($output2[1] eq "charging") { $output2[1]=6; }
+					elsif ($output2[1] eq "mopping") { $output2[1]=7; }
+					else { $output2[1]=-1; }
+				}
+
+				if ($output2[0] eq "cleaning_mode") {
+					#change to 0 if shouldnt send to Lx
+					$sendvalue=1;
+					#change cleaning_mode to fan_power used for roborocks, changed to numbers used in dreamevacuum_miot
+					$output3="$output2[0]";
+					$output2[0]="fan_power";
+					$output4 = $output2[1];
+					if ($output2[1] eq "quiet") { $output2[1]=0; }
+					elsif ($output2[1] eq "standard") { $output2[1]=1; }
+					elsif ($output2[1] eq "strong") { $output2[1]=2; }
+					elsif ($output2[1] eq "turbo") { $output2[1]=3; }
+					else { $output2[1]=-1; }
+				}
+
+				if ($output2[0] eq "cleaning_time") {
+					#change to 0 if shouldnt send to Lx
+					$sendvalue=1;
+					# rename to match virtual outputs
+					$output2[0]="cur_clean_time";
+				}
+
+				if ($output2[0] eq "cleaning_area") {
+					#change to 0 if shouldnt send to Lx
+					$sendvalue=1;
+					# rename to match virtual outputs
+					$output2[0]="cur_clean_area";
+				}
+
+				if ($output2[0] eq "total_clean_time") {
+					#change to 0 if shouldnt send to Lx
+					$sendvalue=1;
+				}
+
+				if ($output2[0] eq "total_clean_area") {
+					#change to 0 if shouldnt send to Lx
+					$sendvalue=1;
+				}
+
+				if ($output2[0] eq "total_clean_times") {
+					#change to 0 if shouldnt send to Lx
+					$sendvalue=1;
+					# rename to match virtual outputs
+					$output2[0]="total_cleanups";
+				}
 				##example for editing and sending other states, [0]parameter from miiocli, [1]value from miiocli
 				#if ($output2[0] eq "example") {
 					#change to 0 if shouldnt send to Lx
