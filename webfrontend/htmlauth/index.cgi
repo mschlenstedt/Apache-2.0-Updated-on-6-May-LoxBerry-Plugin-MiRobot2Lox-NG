@@ -314,10 +314,11 @@ if ($R::form eq "1" || !$R::form) {
 	$template->param( "R$i" . "ACTIVE" => $form );
 	
 	# Device Type
-	@values = ('roborockvacuum', 'viomivacuum' );
+	@values = ('roborockvacuum', 'viomivacuum', 'dreamevacuum' );
 	%labels = (
 	        'roborockvacuum' => $L{'SETTINGS.LABEL_DEVICE_GEN12'},
        		'viomivacuum' => $L{'SETTINGS.LABEL_DEVICE_M1S'},
+			'dreamevacuum' => $L{'SETTINGS.LABEL_DEVICE_DREAME'}
 	);
 	my $devform = $cgi->popup_menu(
 	        -name    => "r" . $i . "device",
