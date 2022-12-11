@@ -65,7 +65,7 @@ else
 fi 
 
 echo "<INFO> Start installing pip3..."
-yes | python3 -m pip -q install --upgrade pip
+yes | python3 -m pip install --upgrade pip
 INSTALLED=$(pip3 list --format=columns | grep "pip" | grep -v grep | wc -l)
 if [ ${INSTALLED} -ne "0" ]; then
 	echo "<OK> Python Pip installed successfully."
