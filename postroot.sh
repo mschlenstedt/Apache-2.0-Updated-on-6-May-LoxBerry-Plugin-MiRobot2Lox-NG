@@ -64,8 +64,19 @@ else
 	echo "<OK> Rust Toolchain installed successfully."
 fi 
 
+echo "<INFO> Start installing pip3..."
+yes | python3 -m pip -q install --upgrade pip
+INSTALLED=$(pip3 list --format=columns | grep "pip" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
+	echo "<OK> Python Pip installed successfully."
+else
+	echo "<WARNING> Python Pip installation failed! The plugin will not work without."
+	echo "<WARNING> Giving up."
+	exit 2;
+fi 
+
 echo "<INFO> Start installing Python Wheel..."
-yes | pip3 install -U pip wheel
+yes | pip3 install wheel
 INSTALLED=$(pip3 list --format=columns | grep "wheel" | grep -v grep | wc -l)
 if [ ${INSTALLED} -ne "0" ]; then
 	echo "<OK> Python Setuptools installed successfully."
