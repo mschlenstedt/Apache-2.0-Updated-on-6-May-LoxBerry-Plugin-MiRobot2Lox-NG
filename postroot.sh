@@ -190,7 +190,7 @@ else
 fi 
 
 
-echo "<INFO> Start installing Token Extractor..."
+#echo "<INFO> Start installing Token Extractor..."
 #wget -O ${PBIN}/token_extractor.py https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor/raw/master/token_extractor.py
 #if [ -e ${PBIN}/token_extractor.py ]; then
 #	echo "<OK> Token Extractor installed successfully."
@@ -199,9 +199,6 @@ echo "<INFO> Start installing Token Extractor..."
 #else
 #	echo "<WARNING> Tokenextractor installation failed! We will continue anyway."
 #fi
-echo "bash <(curl -L https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor/raw/master/run.sh)" > ${PBIN}/token_extractor.sh
-chown loxberry:loxberry ${PBIN}/token_extractor.sh
-chmod +x ${PBIN}/token_extractor.sh
 
 echo "<INFO> Chown all files in ~/log to loxberry:loxberry (fix bug in older versions)..."
 chown -R loxberry:loxberry $PLOG/*
